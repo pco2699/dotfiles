@@ -99,3 +99,6 @@ endif
 set sh=fish
 tnoremap <silent> <ESC> <C-\><C-n>
 set clipboard+=unnamed
+
+" Turn off paste mode when leaving insert
+autocmd InsertLeave * set nopaste

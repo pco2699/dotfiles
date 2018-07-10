@@ -1,5 +1,6 @@
 set -x GOPATH $HOME/.go
 set PATH $PATH $GOPATH/bin
+alias g='git'
 
 set -x PATH $HOME/.pyenv/shims $PATH
 . (pyenv init - | psub)
