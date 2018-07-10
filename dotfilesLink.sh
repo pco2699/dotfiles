@@ -17,3 +17,4 @@ ln -sf ~/dotfiles/fish_user_key_bindings.fish ~/.config/fish/functions
 ln -sf ~/dotfiles/.vimrc ~/.config/nvim/init.vim
 ln -sf ~/dotfiles/dein.toml ~/.config/nvim/
 ln -sf ~/dotfiles/dein_lazy.toml ~/.config/nvim/ 
+ln -sf ~/dotfiles/fish_prompt.fish ~/.config/fish/functions
