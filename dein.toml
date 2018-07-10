@@ -1,0 +1,11 @@
+[[plugins]]
+repo = 'Shougo/dein.vim'
+
+[[plugins]]
+repo = 'scrooloose/nerdtree'
+
+[[plugins]]
+repo = 'mtth/scratch.vim'
+
+[[plugins]]
+repo = 'cohama/lexima.vim'
