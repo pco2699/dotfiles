@@ -102,3 +102,4 @@ set clipboard+=unnamed
 
 " Turn off paste mode when leaving insert
 autocmd InsertLeave * set nopaste
+set ambiwidth=double
