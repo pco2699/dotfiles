@@ -9,3 +9,7 @@ on_ft = ['go']
 [[plugins]]
 repo = 'rcmdnk/vim-markdown'
 on_ft = ['md', 'markdown']
+
+[[plugins]]
+repo = 'davidhalter/jedi-vim'
+on_ft = ['py']
