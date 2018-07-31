@@ -3,7 +3,7 @@ set PATH $PATH $GOPATH/bin
 alias g='git'
 
 set -x PATH $HOME/.pyenv/shims $PATH
-. (pyenv init - | psub)
+tatus --is-interactive; and source (pyenv init -|psub)
 set -g fish_user_paths "/usr/local/opt/mysql-client/bin" $fish_user_paths
 set -x M2_HOME /usr/local/Cellar/maven@3.3/3.3.9/libexec
 
