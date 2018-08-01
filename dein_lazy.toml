@@ -12,4 +12,4 @@ on_ft = ['md', 'markdown']
 
 [[plugins]]
 repo = 'davidhalter/jedi-vim'
-on_ft = ['py']
+on_ft = ['python']
