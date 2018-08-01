@@ -9,3 +9,9 @@ repo = 'mtth/scratch.vim'
 
 [[plugins]]
 repo = 'cohama/lexima.vim'
+
+[[plugins]]
+repo = 'vim-syntastic/syntastic'
+
+[[plugins]]
+repo = 'nathanaelkane/vim-indent-guides'
