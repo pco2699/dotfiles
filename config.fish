@@ -3,9 +3,14 @@ set PATH $PATH $GOPATH/bin
 alias g='git'
 
 set -x PATH $HOME/.pyenv/shims $PATH
+set -x PATH $HOME/dev/flutter/bin $PATH
 status --is-interactive; and source (pyenv init -|psub)
 set -g fish_user_paths "/usr/local/opt/mysql-client/bin" $fish_user_paths
-set -x M2_HOME /usr/local/Cellar/maven@3.3/3.3.9/libexec
+set -x M2_HOME /usr/local/Cellar/maven@3.3/3.3.9_1/libexec
+set -x JAVA_HOME /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home
+set -x PATH /opt/platform-tools $PATH
+set -x CFLAGS -I(brew --prefix openssl)/include
+set -x LDFLAGS -L(brew --prefix openssl)/lib
 
 alias vi='nvim'
 
@@ -27,3 +32,6 @@ set __fish_git_prompt_char_untrackedfiles '☡'
 set __fish_git_prompt_char_stashstate '↩'
 set __fish_git_prompt_char_upstream_ahead '+'
 set __fish_git_prompt_char_upstream_behind '-'
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/ktakayama/dev/misc/google-cloud-sdk/path.fish.inc' ]; . '/Users/ktakayama/dev/misc/google-cloud-sdk/path.fish.inc'; end
