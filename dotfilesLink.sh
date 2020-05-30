@@ -1,6 +1,6 @@
 #!/bin/sh
-brew install tmux
-brew install neovim/neovim/neovim
+sudo apt install tmux
+sudo apt install neovim/neovim/neovim
 curl -Lo ~/.config/fish/functions/fisher.fish --create-dirs https://git.io/fisher
 
 ln -sf ~/dotfiles/fishfile ~/.config/fish/fishfile
