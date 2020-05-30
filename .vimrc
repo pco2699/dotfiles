@@ -12,6 +12,8 @@ set hidden
 " 入力中のコマンドをステータスに表示する
 set showcmd
 
+set wildmenu
+
 inoremap <silent> jj <ESC>
 " 見た目系
 " 行番号を表示
@@ -19,7 +21,7 @@ set number
 " 現在の行を強調表示
 set cursorline
 " 現在の行を強調表示（縦）
-set cursorcolumn
+" set cursorcolumn
 " 行末の1文字先までカーソルを移動できるように
 set virtualedit=onemore
 " インデントはスマートインデント
@@ -67,17 +69,19 @@ if &compatible
  set nocompatible
 endif
 " Add the dein installation directory into runtimepath
-set runtimepath+=~/.vim/bundles/repos/github.com/Shougo/dein.vim
+set runtimepath+=~/.cache/dein/repos/github.com/Shougo/dein.vim
 
-if dein#load_state('~/.vim/bundles')
- call dein#begin('~/.vim/bundles')
+if dein#load_state('~/.cache/dein')
+ call dein#begin('~/.cache/dein')
+
+ call dein#add('~/.cache/dein/repos/github.com/Shougo/dein.vim')
+ call dein#add('Shougo/deoplete.nvim')
  " deintoml, dein_layztomlファイルのディレクトリをセット
  let s:toml_dir = expand('~/.config/nvim')
 
  " 起動時に読み込むプラグイン群
  call dein#load_toml(s:toml_dir . '/dein.toml', {'lazy': 0})
  call dein#load_toml(s:toml_dir . '/dein_lazy.toml', {'lazy': 1})
- call dein#add('~/.vim/bundles')
  call dein#add('Shougo/deoplete.nvim')
  if !has('nvim')
    call dein#add('roxma/nvim-yarp')
@@ -111,20 +115,33 @@ set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
 let g:syntastic_always_populate_loc_list = 0
-let g:syntastic_auto_loc_list = 0
+let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 
 let g:syntastic_mode_map = { 'mode': 'active', 'active_filetypes': [
   \ 'ruby', 'javascript','coffee', 'scss', 'html', 'haml', 'slim', 'sh',
-  \ 'spec', 'vim', 'zsh', 'sass', 'eruby', 'python'] }
+  \ 'spec', 'vim', 'zsh', 'sass', 'eruby', 'python', 'fish'] }
 
 let g:syntastic_javascript_checkers=['eslint']
 let g:syntastic_coffee_checkers = ['coffeelint']
 let g:syntastic_scss_checkers = ['scss_lint']
 let g:syntastic_ruby_checkers = ['rubocop']
+let g:syntastic_python_checkers = ['pylint']
 
 let g:syntastic_error_symbol='✗'
 let g:syntastic_style_error_symbol = '✗'
 let g:syntastic_warning_symbol = '⚠'
 let g:syntastic_style_warning_symbol = '⚠'
+
+let g:lsp_settings = {'typescript-language-server':{'whitelist': ['typescript', 'typescriptreact']}}
+
+" カラースキーム設定
+set background=dark
+colorscheme solarized
+
+let g:airline_theme = 'solarized'
+
+set showtabline=2
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_powerline_fonts = 1
