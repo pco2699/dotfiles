@@ -39,6 +39,7 @@ ln -sf ~/.dotfiles/peco_select_history.fish ~/.config/fish/functions
 ln -sf ~/.dotfiles/peco_select_repository.fish ~/.config/fish/functions
 ln -sf ~/.dotfiles/fish_user_key_bindings.fish ~/.config/fish/functions
 
+mkdir ~/.config/nvim
 ln -sf ~/.dotfiles/.vimrc ~/.config/nvim/init.vim
 ln -sf ~/.dotfiles/dein.toml ~/.config/nvim/
 ln -sf ~/.dotfiles/dein_lazy.toml ~/.config/nvim/ 
