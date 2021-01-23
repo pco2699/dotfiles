@@ -28,7 +28,7 @@ sh ./installer.sh ~/.cache/dein
 curl https://pyenv.run | bash
 
 mkdir -p ~/.config/fish/functions
-ln -sf ~/.dotfiles/fishfile ~/.config/fish/fishfile
+ln -sf ~/.dotfiles/fish_plugins ~/.config/fish
 
 ln -sf ~/.dotfiles/.vimrc ~/.vimrc
 ln -sf ~/.dotfiles/.tmux.conf ~/.tmux.conf
