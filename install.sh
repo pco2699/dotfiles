@@ -27,7 +27,7 @@ sh ./installer.sh ~/.cache/dein
 # install pyenv
 curl https://pyenv.run | bash
 
-curl -Lo ~/.config/fish/functions/fisher.fish --create-dirs https://git.io/fisher
+curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
 
 ln -sf ~/.dotfiles/fishfile ~/.config/fish/fishfile
 
