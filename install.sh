@@ -1,17 +1,17 @@
-#!/bin/sh
+#!/bin/bash
 if [[ "$OSTYPE" == "darwin"* ]]; then
     brew update 
     brew install tmux
-    brew install neovim/neovim/neovim
+    brew install neovim
     brew install go
     brew install ghq
     brew install peco
     # TODO: add powerline
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    sudo apt install tmux
-    sudo apt install neovim/neovim/neovim
-    sudo add-apt-repository ppa:longsleep/golang-backports
     sudo apt update
+    sudo apt install tmux
+    sudo apt install neovim
+    https://github.com/pco2699/dotfiles.git
     sudo apt install golang-go
     sudo apt install peco
     # TODO: add ghq

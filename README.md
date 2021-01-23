@@ -7,7 +7,7 @@ mkdir ~/dotfiles
 
 git clone git://github.com/pco2699/dotfiles.git ~/dotfiles
 
-sh ~/dotfiles/dotfilesLink.sh
+bash ~/dotfiles/install.sh
 ```
 
 ## License
