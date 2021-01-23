@@ -12,7 +12,7 @@ ln -sf ~/.dotfiles/fish_user_key_bindings.fish ~/.config/fish/functions
 
 fisher update
 
-source ~/.config/fish
+source ~/.config/fish/config.fish
 
 go get github.com/x-motemen/ghq
-pip install powerline-status
+pip3 install powerline-status

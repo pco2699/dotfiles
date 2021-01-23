@@ -16,7 +16,7 @@ elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
     sudo apt -y install neovim
     sudo apt -y install golang-go
     sudo apt -y install peco
-    # TODO: add powerline
+    sudo apt install python3-pip
 fi
 
 # install dein.vim

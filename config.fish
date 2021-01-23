@@ -6,11 +6,11 @@ set -Ux PYENV_ROOT $HOME/.pyenv
 set -Ux fish_user_paths $PYENV_ROOT/bin $fish_user_paths
 
 set -x PATH $HOME/.pyenv/shims $PATH
-status --is-interactive; and source (pyenv init -|psub)
-
 alias vi='nvim'
 
 set -x XDG_CONFIG_HOME ~/.config
+
+set fish_theme bobthefish
 
 # Fish git prompt
 set __fish_git_prompt_showdirtystate 'yes'
