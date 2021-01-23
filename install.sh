@@ -16,7 +16,7 @@ elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
     sudo apt -y install neovim
     sudo apt -y install golang-go
     sudo apt -y install peco
-    sudo apt install python3-pip
+    sudo apt -y install python3-pip
 fi
 
 # install dein.vim
@@ -37,5 +37,5 @@ ln -sf ~/.dotfiles/fish_prompt.fish ~/.config/fish/functions
 
 fish ~/.dotfiles/install.fish
 
-chsh -s /usr/bin/fish
+sudo chsh -s /usr/bin/fish
 fish -l
