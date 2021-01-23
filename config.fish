@@ -10,7 +10,7 @@ alias vi='nvim'
 
 set -x XDG_CONFIG_HOME ~/.config
 
-set fish_theme bobthefish
+set -g theme_color_scheme solarized
 
 # Fish git prompt
 set __fish_git_prompt_showdirtystate 'yes'
