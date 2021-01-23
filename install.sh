@@ -27,8 +27,7 @@ sh ./installer.sh ~/.cache/dein
 # install pyenv
 curl https://pyenv.run | bash
 
-curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
-
+mkdir -p ~/.config/fish/functions
 ln -sf ~/.dotfiles/fishfile ~/.config/fish/fishfile
 
 ln -sf ~/.dotfiles/.vimrc ~/.vimrc
@@ -44,6 +43,8 @@ ln -sf ~/.dotfiles/.vimrc ~/.config/nvim/init.vim
 ln -sf ~/.dotfiles/dein.toml ~/.config/nvim/
 ln -sf ~/.dotfiles/dein_lazy.toml ~/.config/nvim/ 
 ln -sf ~/.dotfiles/fish_prompt.fish ~/.config/fish/functions
+
+fish ~/.dotfiles/install.fish
 
 chsh -s /usr/bin/fish
 fish -l
