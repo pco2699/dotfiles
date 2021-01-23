@@ -16,7 +16,6 @@ elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
     sudo apt -y install neovim
     sudo apt -y install golang-go
     sudo apt -y install peco
-    # TODO: add ghq
     # TODO: add powerline
 fi
 
@@ -29,12 +28,6 @@ curl https://pyenv.run | bash
 
 ln -sf ~/.dotfiles/.vimrc ~/.vimrc
 ln -sf ~/.dotfiles/.tmux.conf ~/.tmux.conf
-ln -sf ~/.dotfiles/config.fish ~/.config/fish
-
-mkdir -p ~/.config/fish/functions
-ln -sf ~/.dotfiles/peco_select_history.fish ~/.config/fish/functions
-ln -sf ~/.dotfiles/peco_select_repository.fish ~/.config/fish/functions
-ln -sf ~/.dotfiles/fish_user_key_bindings.fish ~/.config/fish/functions
 
 mkdir ~/.config/nvim
 ln -sf ~/.dotfiles/.vimrc ~/.config/nvim/init.vim
