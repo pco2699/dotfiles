@@ -27,13 +27,11 @@ sh ./installer.sh ~/.cache/dein
 # install pyenv
 curl https://pyenv.run | bash
 
-mkdir -p ~/.config/fish/functions
-ln -sf ~/.dotfiles/fish_plugins ~/.config/fish
-
 ln -sf ~/.dotfiles/.vimrc ~/.vimrc
 ln -sf ~/.dotfiles/.tmux.conf ~/.tmux.conf
 ln -sf ~/.dotfiles/config.fish ~/.config/fish
 
+mkdir -p ~/.config/fish/functions
 ln -sf ~/.dotfiles/peco_select_history.fish ~/.config/fish/functions
 ln -sf ~/.dotfiles/peco_select_repository.fish ~/.config/fish/functions
 ln -sf ~/.dotfiles/fish_user_key_bindings.fish ~/.config/fish/functions
