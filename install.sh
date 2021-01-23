@@ -9,11 +9,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # TODO: add powerline
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     sudo apt update
-    sudo apt install tmux
-    sudo apt install neovim
-    https://github.com/pco2699/dotfiles.git
-    sudo apt install golang-go
-    sudo apt install peco
+    sudo apt -y install tmux
+    sudo apt -y install neovim
+    sudo apt -y install golang-go
+    sudo apt -y install peco
     # TODO: add ghq
     # TODO: add powerline
 fi
