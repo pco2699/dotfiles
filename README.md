@@ -3,11 +3,9 @@
 ## Install
 
 ```
-mkdir ~/dotfiles
-
-git clone git://github.com/pco2699/dotfiles.git ~/dotfiles
-
-bash ~/dotfiles/install.sh
+$ git clone git://github.com/pco2699/dotfiles.git ~/.dotfiles
+$ sh ~/dotfiles/install.sh
+$ fisher
 ```
 
 ## License

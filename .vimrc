@@ -69,10 +69,12 @@ if &compatible
  set nocompatible
 endif
 " Add the dein installation directory into runtimepath
-set runtimepath+=~/.vim/bundles/repos/github.com/Shougo/dein.vim
+set runtimepath+=~/.cache/dein/repos/github.com/Shougo/dein.vim
 
-if dein#load_state('~/.vim/bundles')
- call dein#begin('~/.vim/bundles')
+if dein#load_state('~/.cache/dein')
+ call dein#begin('~/.cache/dein')
+ call dein#add('~/.cache/dein/repos/github.com/Shougo/dein.vim')
+ call dein#add('Shougo/deoplete.nvim')
  " deintoml, dein_layztomlファイルのディレクトリをセット
  let s:toml_dir = expand('~/.config/nvim')
 
@@ -113,18 +115,19 @@ set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
 let g:syntastic_always_populate_loc_list = 0
-let g:syntastic_auto_loc_list = 0
+let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 
 let g:syntastic_mode_map = { 'mode': 'active', 'active_filetypes': [
   \ 'ruby', 'javascript','coffee', 'scss', 'html', 'haml', 'slim', 'sh',
-  \ 'spec', 'vim', 'zsh', 'sass', 'eruby', 'python'] }
+  \ 'spec', 'vim', 'zsh', 'sass', 'eruby', 'python', 'fish'] }
 
 let g:syntastic_javascript_checkers=['eslint']
 let g:syntastic_coffee_checkers = ['coffeelint']
 let g:syntastic_scss_checkers = ['scss_lint']
 let g:syntastic_ruby_checkers = ['rubocop']
+let g:syntastic_python_checkers = ['pylint']
 
 let g:syntastic_error_symbol='✗'
 let g:syntastic_style_error_symbol = '✗'
