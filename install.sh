@@ -29,7 +29,7 @@ curl https://pyenv.run | bash
 ln -sf ~/.dotfiles/.vimrc ~/.vimrc
 ln -sf ~/.dotfiles/.tmux.conf ~/.tmux.conf
 
-mkdir ~/.config/nvim
+mkdir -p ~/.config/nvim
 ln -sf ~/.dotfiles/.vimrc ~/.config/nvim/init.vim
 ln -sf ~/.dotfiles/dein.toml ~/.config/nvim/
 ln -sf ~/.dotfiles/dein_lazy.toml ~/.config/nvim/ 
