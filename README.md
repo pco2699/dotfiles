@@ -4,7 +4,7 @@
 
 ```
 $ git clone git://github.com/pco2699/dotfiles.git ~/.dotfiles
-$ sh ~/.dotfiles/install.sh
+$ bash ~/.dotfiles/install.sh
 $ fisher
 ```
 

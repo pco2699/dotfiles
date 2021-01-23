@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ "$OSTYPE" = "darwin" ]; then
+if [[ "$OSTYPE" = "darwin"* ]]; then
     brew update 
     brew install fish
     brew install tmux
@@ -8,7 +8,7 @@ if [ "$OSTYPE" = "darwin" ]; then
     brew install ghq
     brew install peco
     # TODO: add powerline
-elif [ "$OSTYPE" = "linux-gnu" ]; then
+elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
     sudo apt-add-repository -y ppa:fish-shell/release-3
     sudo apt update
     sudo apt -y install fish
