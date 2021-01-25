@@ -15,6 +15,7 @@ function peco_change_directory
     echo $HOME/Documents
     echo $HOME/Desktop
     echo $HOME/.config
+    echo $HOME/dev
     ls -ad */|perl -pe "s#^#$PWD/#"|egrep -v "^$PWD/\."|head -n 5
     sort -r -t '|' -k 3 ~/.z|sed -e 's/\|.*//'
     ghq list -p
