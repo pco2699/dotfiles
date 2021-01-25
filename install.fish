@@ -15,4 +15,3 @@ fisher update
 source ~/.config/fish/config.fish
 
 go get github.com/x-motemen/ghq
-pip3 install powerline-status

@@ -5,7 +5,6 @@
 ```
 $ git clone git://github.com/pco2699/dotfiles.git ~/.dotfiles
 $ ~/.dotfiles/install.sh
-$ fisher
 ```
 
 ## License
