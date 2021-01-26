@@ -1,11 +1,12 @@
 set -x GOPATH $HOME/.go
-set PATH $PATH $GOPATH/bin
+set -x PATH $GOPATH/bin $PATH
+set -x PATH $HOME/.pyenv/shims/bin $PATH
+set -x PYENV_ROOT $HOME/.pyenv
+set -x PATH $PYENV_ROOT/bin $PATH
+set -x PATH $HOME/.pyenv/shims $PATH
+
 alias g='git'
 
-set -Ux PYENV_ROOT $HOME/.pyenv
-set -Ux fish_user_paths $PYENV_ROOT/bin $fish_user_paths
-
-set -x PATH $HOME/.pyenv/shims $PATH
 alias vi='nvim'
 
 set -x XDG_CONFIG_HOME ~/.config
