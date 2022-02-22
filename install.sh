@@ -38,5 +38,5 @@ ln -sf ~/.dotfiles/dein_lazy.toml ~/.config/nvim/
 
 fish ~/.dotfiles/install.fish
 
-sudo chsh -s /usr/bin/fish
+chsh -s /usr/bin/fish
 fish -l
