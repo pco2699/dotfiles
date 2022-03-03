@@ -1,4 +1,6 @@
 set -x GOPATH $HOME/.go
+set -x GOROOT /usr/local/go
+set -x PATH /usr/local/go/bin $PATH
 set -x PATH $GOPATH/bin $PATH
 set -x PATH $HOME/.pyenv/shims/bin $PATH
 set -x PYENV_ROOT $HOME/.pyenv
