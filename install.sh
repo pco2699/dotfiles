@@ -17,7 +17,6 @@ elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
     sudo apt -y install fish
     sudo apt -y install tmux
     sudo apt -y install neovim
-    sudo apt -y install golang-go
     sudo apt -y install peco
     sudo apt -y install python3-pip
     sudo apt -y install powerline
@@ -31,6 +30,11 @@ rm -rf ./installer.sh
 
 # install pyenv
 curl https://pyenv.run | bash
+
+# install go
+wget https://golang.org/dl/go1.17.1.linux-amd64.tar.gz
+tar -C /usr/local -xzf go1.17.1.linux-amd64.tar.gz
+mkdir ~/.go
 
 ln -sf ~/.dotfiles/.vimrc ~/.vimrc
 ln -sf ~/.dotfiles/.tmux.conf ~/.tmux.conf
