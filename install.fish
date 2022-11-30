@@ -15,3 +15,5 @@ fisher update
 source ~/.config/fish/config.fish
 
 go install github.com/x-motemen/ghq@latest
+mkdir ~/.ghq
+git config --global ghq.root "~/.ghq"
