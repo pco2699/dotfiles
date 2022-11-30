@@ -14,4 +14,4 @@ fisher update
 
 source ~/.config/fish/config.fish
 
-go get github.com/x-motemen/ghq
+go install github.com/x-motemen/ghq@latest
