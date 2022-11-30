@@ -21,10 +21,14 @@ elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
     sudo apt -y install python3-pip
     sudo apt -y install powerline
     sudo apt -y install gh
+    sudo apt -y install zip
 fi
 
 # install pyenv
 curl https://pyenv.run | bash
+
+# install sdkman
+curl -s "https://get.sdkman.io" | bash
 
 # install go
 wget https://golang.org/dl/go1.19.1.linux-amd64.tar.gz
