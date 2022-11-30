@@ -9,3 +9,4 @@ winget install -e --id Discord.Discord
 winget install -e --id Google.Drive
 winget install -e --id Zoom.Zoom
 winget install -e --id Microsoft.PowerToys
+winget install -e --id Git.Git
