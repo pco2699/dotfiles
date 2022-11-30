@@ -29,6 +29,11 @@ curl https://pyenv.run | bash
 
 # install sdkman
 curl -s "https://get.sdkman.io" | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+# install java, maven
+sdk install java 19.0.1-amzn
+sdk install maven
 
 # install go
 wget https://golang.org/dl/go1.19.1.linux-amd64.tar.gz
