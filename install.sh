@@ -28,7 +28,7 @@ curl https://pyenv.run | bash
 
 # install go
 wget https://golang.org/dl/go1.19.1.linux-amd64.tar.gz
-tar -C /usr/local -xzf go1.19.1.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.19.1.linux-amd64.tar.gz
 mkdir ~/.go
 
 ln -sf ~/.dotfiles/.vimrc ~/.vimrc
