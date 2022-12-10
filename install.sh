@@ -47,7 +47,23 @@ ln -sf ~/.dotfiles/.tmux.conf ~/.tmux.conf
 mkdir -p ~/.config/nvim
 ln -sf ~/.dotfiles/.vimrc ~/.config/nvim/init.vim
 
-fish ~/.dotfiles/install.fish
+curl -sL https://git.io/fisher | source
+
+mkdir -p ~/.config/fish/functions
+ln -sf ~/.dotfiles/fish_plugins ~/.config/fish
+ln -sf ~/.dotfiles/config.fish ~/.config/fish
+
+ln -sf ~/.dotfiles/peco_select_history.fish ~/.config/fish/functions
+ln -sf ~/.dotfiles/peco_select_repository.fish ~/.config/fish/functions
+ln -sf ~/.dotfiles/fish_user_key_bindings.fish ~/.config/fish/functions
+
+fisher update
+
+source ~/.config/fish/config.fish
+
+go install github.com/x-motemen/ghq@latest
+mkdir ~/.ghq
+git config --global ghq.root "~/.ghq"
 
 chsh -s /usr/bin/fish
 fish -l
