@@ -57,9 +57,7 @@ ln -sf ~/.dotfiles/peco_select_history.fish ~/.config/fish/functions
 ln -sf ~/.dotfiles/peco_select_repository.fish ~/.config/fish/functions
 ln -sf ~/.dotfiles/fish_user_key_bindings.fish ~/.config/fish/functions
 
-fisher update
-
-source ~/.config/fish/config.fish
+fish fisher update
 
 go install github.com/x-motemen/ghq@latest
 mkdir ~/.ghq
