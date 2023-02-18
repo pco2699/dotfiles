@@ -11,3 +11,4 @@ winget install -e --id Git.Git
 winget install -e --id Foxit.FoxitReader
 winget install -e --id Amazon.Kindle
 winget install -e --id SlackTechnologies.Slack
+winget install -e --id Logitech.OptionsPlus
