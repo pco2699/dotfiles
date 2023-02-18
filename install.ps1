@@ -1,5 +1,3 @@
-wsl --install
-
 winget install -e --id JetBrains.Toolbox
 winget install -e --id Microsoft.VisualStudioCode
 winget install -e --id Microsoft.WindowsTerminal
