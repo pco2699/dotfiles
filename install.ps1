@@ -12,3 +12,4 @@ winget install -e --id Foxit.FoxitReader
 winget install -e --id Amazon.Kindle
 winget install -e --id SlackTechnologies.Slack
 winget install -e --id Logitech.OptionsPlus
+winget install -e --id RandyRants.SharpKeys
