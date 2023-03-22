@@ -5,7 +5,7 @@ set-option -g default-shell $SHELL
 ## コピーモードの操作をvi風に設定する
 unbind -T copy-mode-vi Enter
 bind-key -T copy-mode-vi v     send-keys -X begin-selection
-bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "cat | win32yank.exe -i"
-bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "cat | win32yank.exe -i"
-bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "cat | win32yank.exe -i"
-bind-key C-p run-shell "win32yank -o | tmux load-buffer - && tmux paste-buffer"
+bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "cat | clip.exe -i"
+bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "cat | clip.exe -i"
+bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "cat | clip.exe -i"
+bind-key C-p run-shell "nvim_paste | tmux load-buffer - && tmux paste-buffer"

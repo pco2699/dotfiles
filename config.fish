@@ -1,11 +1,9 @@
 set -x GOPATH $HOME/.go
 set -x GOROOT /usr/local/go
 set -x PATH /usr/local/go/bin $PATH
+set -x PATH $HOME/.local/bin $PATH
 set -x PATH $GOPATH/bin $PATH
-set -x PATH $HOME/.pyenv/shims/bin $PATH
-set -x PYENV_ROOT $HOME/.pyenv
-set -x PATH $PYENV_ROOT/bin $PATH
-set -x PATH $HOME/.pyenv/shims $PATH
+set -x PATH $HOME/.cargo/bin $PATH
 
 alias g='git'
 
@@ -32,3 +30,9 @@ set __fish_git_prompt_char_untrackedfiles '☡'
 set __fish_git_prompt_char_stashstate '↩'
 set __fish_git_prompt_char_upstream_ahead '+'
 set __fish_git_prompt_char_upstream_behind '-'
+
+# opam configuration
+source /home/pco2699/.opam/opam-init/init.fish > /dev/null 2> /dev/null; or true
+
+# asdf configuration
+source ~/.asdf/asdf.fish

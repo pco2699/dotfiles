@@ -16,36 +16,48 @@ elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
     sudo apt update
     sudo apt -y install fish
     sudo apt -y install tmux
-    sudo apt -y install neovim
     sudo apt -y install peco
-    sudo apt -y install python3-pip
     sudo apt -y install powerline
     sudo apt -y install gh
     sudo apt -y install zip
+    # required by asdf
+    sudo aot -y install dirmngr gpg curl gawk 
 fi
 
-# install pyenv
-curl https://pyenv.run | bash
+# install asdf
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.11.3
+. "$HOME/.asdf/asdf.sh"
 
-# install sdkman
-curl -s "https://get.sdkman.io" | bash
-source "$HOME/.sdkman/bin/sdkman-init.sh"
+# nodejs setup
+asdf plugin add nodejs
+asdf install nodejs latest
+asdf global nodejs latest
 
-# install java, maven
-sdk install java 19.0.1-amzn
-sdk install maven
+# python setup
+asdf plugin-add python
+asdf install python latest
+asdf global python latest
 
-# install go
-wget https://golang.org/dl/go1.19.1.linux-amd64.tar.gz
-sudo tar -C /usr/local -xzf go1.19.1.linux-amd64.tar.gz
-rm -rf go1.19.1.linux-amd64.tar.gz
-mkdir ~/.go
+# go setup
+asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
+asdf install golang latest
+asdf global golang latest
 
-ln -sf ~/.dotfiles/.vimrc ~/.vimrc
+# install tree-sitter
+npm install -g tree-sitter-cli
+
+# install nvim
+curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.deb
+sudo apt install ./nvim-linux64.deb
+rm -rf nvim-linux64.deb
+
+# install astro nvim
+git clone --depth 1 https://github.com/AstroNvim/AstroNvim ~/.config/nvim
+git clone https://github.com/pco2699/astronvim_config.git ~/.config/nvim/lua/user
+
+# tmux conf
 ln -sf ~/.dotfiles/.tmux.conf ~/.tmux.conf
 
-mkdir -p ~/.config/nvim
-ln -sf ~/.dotfiles/.vimrc ~/.config/nvim/init.vim
 
 go install github.com/x-motemen/ghq@latest
 mkdir ~/.ghq
