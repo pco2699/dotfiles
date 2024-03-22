@@ -69,5 +69,8 @@ fi
 mkdir ~/.ghq
 git config --global ghq.root "~/.ghq"
 
+# tmux plugins
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
 chsh -s /usr/bin/fish
 fish -l
