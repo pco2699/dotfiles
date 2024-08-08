@@ -1,4 +1,7 @@
 #!/bin/bash
+
+mkdir -p ~/.local/bin
+
 if [[ "$OSTYPE" = "darwin"* ]]; then
     brew update 
     brew install fish
@@ -23,9 +26,9 @@ elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
     sudo aot -y install dirmngr gpg curl gawk 
 
     # install nvim
-    curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.deb
-    sudo apt install ./nvim-linux64.deb
-    rm -rf nvim-linux64.deb
+    curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+    sudo tar -C ~/.local/bin -xzf nvim-linux64.tar.gz
+    mv ~/.local/bin/nvim-linux64 ~/.local/bin/nvim
 fi
 
 # install asdf
