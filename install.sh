@@ -25,8 +25,7 @@ elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
     sudo aot -y install dirmngr gpg curl gawk 
 
     # install nvim
-    curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-    sudo tar -C ~/.local/ -xzf nvim-linux64.tar.gz
+    sudo apt -y install neovim
 fi
 
 # install asdf
