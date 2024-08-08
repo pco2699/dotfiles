@@ -11,7 +11,6 @@ if [[ "$OSTYPE" = "darwin"* ]]; then
     brew install ghq
     brew install peco
     brew install gh
-    brew install reattach-to-user-namespace
 elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
     curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
@@ -27,8 +26,7 @@ elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
 
     # install nvim
     curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-    sudo tar -C ~/.local/bin -xzf nvim-linux64.tar.gz
-    mv ~/.local/bin/nvim-linux64 ~/.local/bin/nvim
+    sudo tar -C ~/.local/ -xzf nvim-linux64.tar.gz
 fi
 
 # install asdf
