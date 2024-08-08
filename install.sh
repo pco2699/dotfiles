@@ -17,7 +17,6 @@ elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
     sudo apt -y install fish
     sudo apt -y install tmux
     sudo apt -y install peco
-    sudo apt -y install powerline
     sudo apt -y install gh
     sudo apt -y install zip
     # required by asdf
@@ -59,7 +58,6 @@ git clone https://github.com/pco2699/astronvim_config.git ~/.config/nvim/lua/use
 ln -sf ~/.dotfiles/.tmux.conf ~/.tmux.conf
 
 if [[ "$OSTYPE" = "darwin"* ]]; then
-    pip3 install powerline-status
     asdf reshim python
 elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
     go install github.com/x-motemen/ghq@latest
