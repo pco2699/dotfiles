@@ -16,17 +16,21 @@ elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
     sudo apt-add-repository -y ppa:fish-shell/release-3
     sudo apt update
-    sudo apt -y install fish
-    sudo apt -y install tmux
-    sudo apt -y install peco
-    sudo apt -y install gh
-    sudo apt -y install zip
+    sudo apt -y install fish tmux peco gh zip
+
     # required by asdf
-    sudo aot -y install dirmngr gpg curl gawk 
+    sudo apt -y install dirmngr gpg curl gawk
+
+    # required by python
+    sudo apt -y install build-essential libssl-dev zlib1g-dev \
+    libbz2-dev libreadline-dev libsqlite3-dev curl git \
+    libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
 
     # install nvim
     curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-    tar -C ~/.local/ -xzf nvim-linux64.tar.gz
+    tar -C ~/.local/ --strip-components=1 -xzf nvim-linux64.tar.gz
+    rm -rf ~/.local/bin/README.md
+    rm -rf ~/.local/bin/LICENSE
 
     # install win32yank
     curl -LO https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip
@@ -48,12 +52,12 @@ asdf install python latest
 asdf global python latest
 
 # go setup
-asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
+asdf plugin-add golang
 asdf install golang latest
 asdf global golang latest
 
-# install tree-sitter
-npm install -g tree-sitter-cli
+# install lazyvim
+git clone https://github.com/LazyVim/starter ~/.config/nvim
 
 # tmux conf
 ln -sf ~/.dotfiles/.tmux.conf ~/.tmux.conf
