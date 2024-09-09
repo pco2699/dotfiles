@@ -55,10 +55,6 @@ asdf global golang latest
 # install tree-sitter
 npm install -g tree-sitter-cli
 
-# install astro nvim
-git clone --depth 1 https://github.com/AstroNvim/AstroNvim ~/.config/nvim
-git clone https://github.com/pco2699/astronvim_config.git ~/.config/nvim/lua/user
-
 # tmux conf
 ln -sf ~/.dotfiles/.tmux.conf ~/.tmux.conf
 
