@@ -60,8 +60,6 @@ ln -sf ~/.dotfiles/.tmux.conf ~/.tmux.conf
 
 if [[ "$OSTYPE" = "darwin"* ]]; then
     asdf reshim python
-elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
-    go install github.com/x-motemen/ghq@latest
 fi
 
 # ghq conf
