@@ -1,7 +1,4 @@
-set -x GOPATH $HOME/.go
-set -x PATH /usr/local/go/bin $PATH
 set -x PATH $HOME/.local/bin $PATH
-set -x PATH $GOPATH/bin $PATH
 set -x PATH $HOME/.cargo/bin $PATH
 
 alias g='git'
