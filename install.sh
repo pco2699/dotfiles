@@ -25,11 +25,16 @@ elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
     sudo aot -y install dirmngr gpg curl gawk 
 
     # install nvim
-    sudo apt -y install neovim
+    curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+    tar -C ~/.local/ -xzf nvim-linux64.tar.gz
+
+    # install win32yank
+    curl -LO https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip
+    unzip win32yank-x64.zip -d ~/.local/bin
 fi
 
 # install asdf
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.11.3
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1
 . "$HOME/.asdf/asdf.sh"
 
 # nodejs setup
