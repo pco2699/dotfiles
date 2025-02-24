@@ -67,7 +67,6 @@ tar -C ~/.local/bin -xzf lemonade_linux_amd64.tar.gz
 # install fisher
 mkdir -p ~/.config/fish/functions
 ln -sf $DOTFILES_DIR/fish_plugins ~/.config/fish/fish_plugins
-fish -c "curl -sL https://git.io/fisher | source; fisher update"
 
 # link fish config
 ln -sf $DOTFILES_DIR/config.fish ~/.config/fish/config.fish
@@ -76,6 +75,8 @@ ln -sf $DOTFILES_DIR/fish_user_key_bindings.fish ~/.config/fish/functions/fish_u
 if [ "$CODESPACES" == true ]; then
 	sudo chsh "$(id -un)" --shell /usr/bin/fish
 else
+	fish -c "curl -sL https://git.io/fisher | source; fisher update"
+ 
 	# install the required env of asdf only on not-codespaces ones
 	# nodejs setup
 	asdf plugin add nodejs
