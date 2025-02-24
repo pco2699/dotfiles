@@ -27,11 +27,11 @@ elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
 		libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
 
 	# install nvim
-	curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-	tar -C ~/.local/ --strip-components 1 -xzf nvim-linux64.tar.gz
+	curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+	tar -C ~/.local/ --strip-components 1 -xzf nvim-linux-x86_64.tar.gz
 	rm -rf ~/.local/bin/README.md
 	rm -rf ~/.local/bin/LICENSE
-	rm -rf nvim-linux64.tar.gz
+	rm -rf nvim-linux-x86_64.tar.gz
 
 	# install win32yank
 	curl -LO https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip
