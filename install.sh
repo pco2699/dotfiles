@@ -66,6 +66,7 @@ ln -sf ~/.dotfiles/nvim/ ~/.config/nvim/
 
 # tmux conf
 ln -sf ~/.dotfiles/.tmux.conf ~/.tmux.conf
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 if [[ "$OSTYPE" = "darwin"* ]]; then
 	asdf reshim python
@@ -81,12 +82,12 @@ curl -LO https://github.com/lemonade-command/lemonade/releases/download/v1.1.1/l
 tar -C ~/.local/bin -xzf lemonade_linux_amd64.tar.gz
 
 # install fisher
-ln -sf ~/.dotfiles/fish_plugins ~/.config/fish
+mkdir -p ~/.config/fish/functions
+ln -sf ~/.dotfiles/fish_plugins ~/.config/fish/fish_plugins
 fish -c "curl -sL https://git.io/fisher | source; fisher update"
 
 # link fish config
-mkdir -p ~/.config/fish/functions
-ln -sf ~/.dotfiles/config.fish ~/.config/fish
-ln -sf ~/.dotfiles/fish_user_key_bindings.fish ~/.config/fish/functions
+ln -sf ~/.dotfiles/config.fish ~/.config/fish/config.fish
+ln -sf ~/.dotfiles/fish_user_key_bindings.fish ~/.config/fish/functions/fish_user_key_bindings.fish
 
 echo "Please run 'chsh -s $(which fish)' to change your shell to fish"
