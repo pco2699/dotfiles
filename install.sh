@@ -81,9 +81,8 @@ curl -LO https://github.com/lemonade-command/lemonade/releases/download/v1.1.1/l
 tar -C ~/.local/bin -xzf lemonade_linux_amd64.tar.gz
 
 # install fisher
-curl -sL https://git.io/fisher | source
 ln -sf ~/.dotfiles/fish_plugins ~/.config/fish
-fisher update
+fish -c "curl -sL https://git.io/fisher | source; fisher update"
 
 # link fish config
 mkdir -p ~/.config/fish/functions
