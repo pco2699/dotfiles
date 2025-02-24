@@ -29,10 +29,12 @@ elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
 	tar -C ~/.local/ --strip-components=1 -xzf nvim-linux64.tar.gz
 	rm -rf ~/.local/bin/README.md
 	rm -rf ~/.local/bin/LICENSE
+	rm -rf nvim-linux64.tar.gz
 
 	# install win32yank
 	curl -LO https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip
 	unzip win32yank-x64.zip -d ~/.local/bin
+	rm -rf win32yank-x64.zip
 fi
 
 # install asdf
@@ -75,9 +77,8 @@ mkdir ~/.ghq
 git config --global ghq.root "~/.ghq"
 
 # install lemonade
-go get -d github.com/lemonade-command/lemonade
-cd $GOPATH/src/github.com/lemonade-command/lemonade/
-make install
+curl -LO https://github.com/lemonade-command/lemonade/releases/download/v1.1.1/lemonade_linux_amd64.tar.gz
+tar -C ~/.local/bin -xzf lemonade_linux_amd64.tar.gz
 
 # install fisher
 curl -sL https://git.io/fisher | source
@@ -89,5 +90,4 @@ mkdir -p ~/.config/fish/functions
 ln -sf ~/.dotfiles/config.fish ~/.config/fish
 ln -sf ~/.dotfiles/fish_user_key_bindings.fish ~/.config/fish/functions
 
-chsh -s /usr/bin/fish
-fish -l
+echo "Please run 'chsh -s $(which fish)' to change your shell to fish"
