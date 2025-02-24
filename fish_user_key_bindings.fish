@@ -6,7 +6,7 @@ function fish_user_key_bindings
     ### pisces ###
     set -l _pisces_bind_mode default
     switch $fish_key_bindings
-        case 'fish_vi_key_bindings' 'fish_hybrid_key_bindings'
+        case fish_vi_key_bindings fish_hybrid_key_bindings
             set _pisces_bind_mode insert
     end
     set -q pisces_pairs
