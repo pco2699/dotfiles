@@ -1,4 +1,6 @@
 #!/bin/bash
+
+DOTFILES_DIR=$(dirname $(realpath $0))
 if [[ "$OSTYPE" = "darwin"* ]]; then
 	brew update
 	brew install fish
@@ -42,10 +44,11 @@ git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1
 source "$HOME/.asdf/asdf.sh"
 
 # install lazy nvim
-ln -sf ~/.dotfiles/nvim/ ~/.config/nvim
+ln -sf $DOTFILES_DIR/nvim/ ~/.config/nvim/
 
 # tmux conf
-ln -sf ~/.dotfiles/.tmux.conf ~/.tmux.conf
+ln -sf $DOTFILES_DIR/.tmux.conf ~/.tmux.conf
+ln -sf $DOTFILES_DIR/.tmux.conf.* ~
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 if [[ "$OSTYPE" = "darwin"* ]]; then
@@ -63,37 +66,37 @@ tar -C ~/.local/bin -xzf lemonade_linux_amd64.tar.gz
 
 # install fisher
 mkdir -p ~/.config/fish/functions
-ln -sf ~/.dotfiles/fish_plugins ~/.config/fish/fish_plugins
+ln -sf $DOTFILES_DIR/fish_plugins ~/.config/fish/fish_plugins
 fish -c "curl -sL https://git.io/fisher | source; fisher update"
 
 # link fish config
-ln -sf ~/.dotfiles/config.fish ~/.config/fish/config.fish
-ln -sf ~/.dotfiles/fish_user_key_bindings.fish ~/.config/fish/functions/fish_user_key_bindings.fish
+ln -sf $DOTFILES_DIR/config.fish ~/.config/fish/config.fish
+ln -sf $DOTFILES_DIR/fish_user_key_bindings.fish ~/.config/fish/functions/fish_user_key_bindings.fish
 
 if [ "$CODESPACES" == true ]; then
 	sudo chsh "$(id -un)" --shell /usr/bin/fish
 else
 	# install the required env of asdf only on not-codespaces ones
- 	# nodejs setup
+	# nodejs setup
 	asdf plugin add nodejs
 	asdf install nodejs latest
 	asdf global nodejs latest
-	
+
 	# python setup
 	asdf plugin-add python
 	asdf install python latest
 	asdf global python latest
-	
+
 	# go setup
 	asdf plugin-add golang
 	asdf install golang latest
 	asdf global golang latest
-	
+
 	# zig setup
 	asdf plugin-add zig
 	asdf install zig latest
 	asdf global zig latest
- 	echo "run chsh -s /usr/bin/fish on your shell"
+	echo "run chsh -s /usr/bin/fish on your shell"
 fi
 
 fish -l
