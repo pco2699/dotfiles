@@ -90,4 +90,5 @@ fish -c "curl -sL https://git.io/fisher | source; fisher update"
 ln -sf ~/.dotfiles/config.fish ~/.config/fish/config.fish
 ln -sf ~/.dotfiles/fish_user_key_bindings.fish ~/.config/fish/functions/fish_user_key_bindings.fish
 
-echo "Please run 'chsh -s $(which fish)' to change your shell to fish"
+sudo chsh "$(id -un)" --shell /usr/bin/fish
+fish -l
