@@ -44,7 +44,7 @@ git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1
 source "$HOME/.asdf/asdf.sh"
 
 # install lazy nvim
-ln -sf $DOTFILES_DIR/nvim/ ~/.config/nvim/
+ln -sf $DOTFILES_DIR/nvim/ ~/.config/nvim
 
 # tmux conf
 ln -sf $DOTFILES_DIR/.tmux.conf ~/.tmux.conf
