@@ -26,7 +26,7 @@ elif [[ "$OSTYPE" = "linux-gnu"* ]]; then
 
 	# install nvim
 	curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-	tar -C ~/.local/ --strip-components=1 -xzf nvim-linux64.tar.gz
+	tar -C ~/.local/ --strip-components 1 -xzf nvim-linux64.tar.gz
 	rm -rf ~/.local/bin/README.md
 	rm -rf ~/.local/bin/LICENSE
 	rm -rf nvim-linux64.tar.gz
@@ -39,7 +39,7 @@ fi
 
 # install asdf
 git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1
-. "$HOME/.asdf/asdf.sh"
+source "$HOME/.asdf/asdf.sh"
 
 # nodejs setup
 asdf plugin add nodejs
@@ -62,7 +62,7 @@ asdf install zig latest
 asdf global zig latest
 
 # install lazy nvim
-ln -sf ~/.dotfiles/nvim/ ~/.config/nvim/
+ln -sf ~/.dotfiles/nvim/ ~/.config/nvim
 
 # tmux conf
 ln -sf ~/.dotfiles/.tmux.conf ~/.tmux.conf
@@ -90,5 +90,10 @@ fish -c "curl -sL https://git.io/fisher | source; fisher update"
 ln -sf ~/.dotfiles/config.fish ~/.config/fish/config.fish
 ln -sf ~/.dotfiles/fish_user_key_bindings.fish ~/.config/fish/functions/fish_user_key_bindings.fish
 
-sudo chsh "$(id -un)" --shell /usr/bin/fish
+if [ "$CODESPACES" == true ]; then
+	sudo chsh "$(id -un)" --shell /usr/bin/fish
+else
+	echo "run chsh -s /usr/bin/fish on your shell"
+fi
+
 fish -l
