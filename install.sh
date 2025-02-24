@@ -74,6 +74,11 @@ go install github.com/x-motemen/ghq@latest
 mkdir ~/.ghq
 git config --global ghq.root "~/.ghq"
 
+# install lemonade
+go get -d github.com/lemonade-command/lemonade
+cd $GOPATH/src/github.com/lemonade-command/lemonade/
+make install
+
 # install fisher
 curl -sL https://git.io/fisher | source
 ln -sf ~/.dotfiles/fish_plugins ~/.config/fish

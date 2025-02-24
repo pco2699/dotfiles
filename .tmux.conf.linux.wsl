@@ -1,0 +1,13 @@
+# コピーモードを設定する
+## viのキーバインドを使用する
+setw -g mode-keys vi
+set-option -g default-shell $SHELL
+## コピーモードの操作をvi風に設定する
+unbind -T copy-mode-vi Enter
+bind-key -T copy-mode-vi v     send-keys -X begin-selection
+bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "cat | clip.exe -i"
+bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "cat | clip.exe -i"
+bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "cat | clip.exe -i"
+
+bind-key C-p run-shell "win32yank.exe -o | tmux load-buffer - && tmux paste-buffer"
+bind-key ] run-shell "win32yank.exe -o | tmux load-buffer - && tmux paste-buffer"
