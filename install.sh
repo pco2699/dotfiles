@@ -67,7 +67,7 @@ tar -C ~/.local/bin -xzf lemonade_linux_amd64.tar.gz
 # install fisher
 mkdir -p ~/.config/fish/functions
 ln -sf $DOTFILES_DIR/fish_plugins ~/.config/fish/fish_plugins
-fish -c "curl -sL https://git.io/fisher | source; fisher update"
+# fish -c "curl -sL https://git.io/fisher | source; fisher update"
 
 # link fish config
 ln -sf $DOTFILES_DIR/config.fish ~/.config/fish/config.fish
