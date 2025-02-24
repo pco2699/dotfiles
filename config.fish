@@ -47,25 +47,6 @@ set __fish_git_prompt_char_upstream_behind -
 # opam configuration
 source /home/pco2699/.opam/opam-init/init.fish >/dev/null 2>/dev/null; or true
 
-<<<<<<< HEAD
 # asdf configuration
 . ~/.asdf/asdf.fish
 . ~/.asdf/plugins/golang/set-env.fish
-=======
-source ~/.open_api_key.env
-
-
-set -gx WASMTIME_HOME "$HOME/.wasmtime"
-
-string match -r ".wasmtime" "$PATH" >/dev/null; or set -gx PATH "$WASMTIME_HOME/bin" $PATH
-# Wasmer
-export WASMER_DIR="/home/pco2699/.wasmer"
-[ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh"
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-#if test -f /home/pco2699/miniconda3/bin/conda
-#    eval /home/pco2699/miniconda3/bin/conda "shell.fish" "hook" $argv | source
-#end
-# <<< conda initialize <<<
->>>>>>> 403200d (updates)
