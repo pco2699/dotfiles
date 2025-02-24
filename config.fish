@@ -1,7 +1,6 @@
 set -f GHQ_PATH $HOME/.ghq
 
 set -x PATH $HOME/.local/bin $PATH
-set -x PATH $HOME/.local/nvim-linux64/bin $PATH
 set -x PATH $GOPATH/bin $PATH
 set -x PATH $HOME/.cargo/bin $PATH
 
