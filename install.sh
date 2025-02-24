@@ -41,26 +41,6 @@ fi
 git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1
 source "$HOME/.asdf/asdf.sh"
 
-# nodejs setup
-asdf plugin add nodejs
-asdf install nodejs latest
-asdf global nodejs latest
-
-# python setup
-asdf plugin-add python
-asdf install python latest
-asdf global python latest
-
-# go setup
-asdf plugin-add golang
-asdf install golang latest
-asdf global golang latest
-
-# zig setup
-asdf plugin-add zig
-asdf install zig latest
-asdf global zig latest
-
 # install lazy nvim
 ln -sf ~/.dotfiles/nvim/ ~/.config/nvim
 
@@ -93,7 +73,27 @@ ln -sf ~/.dotfiles/fish_user_key_bindings.fish ~/.config/fish/functions/fish_use
 if [ "$CODESPACES" == true ]; then
 	sudo chsh "$(id -un)" --shell /usr/bin/fish
 else
-	echo "run chsh -s /usr/bin/fish on your shell"
+	# install the required env of asdf only on not-codespaces ones
+ 	# nodejs setup
+	asdf plugin add nodejs
+	asdf install nodejs latest
+	asdf global nodejs latest
+	
+	# python setup
+	asdf plugin-add python
+	asdf install python latest
+	asdf global python latest
+	
+	# go setup
+	asdf plugin-add golang
+	asdf install golang latest
+	asdf global golang latest
+	
+	# zig setup
+	asdf plugin-add zig
+	asdf install zig latest
+	asdf global zig latest
+ 	echo "run chsh -s /usr/bin/fish on your shell"
 fi
 
 fish -l
