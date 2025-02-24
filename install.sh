@@ -54,8 +54,10 @@ asdf plugin-add golang
 asdf install golang latest
 asdf global golang latest
 
-# install tree-sitter
-npm install -g tree-sitter-cli
+# zig setup
+asdf plugin-add zig
+asdf install zig latest
+asdf global zig latest
 
 # install lazy nvim
 ln -sf ~/.dotfiles/nvim/ ~/.config/nvim/
@@ -71,6 +73,16 @@ fi
 go install github.com/x-motemen/ghq@latest
 mkdir ~/.ghq
 git config --global ghq.root "~/.ghq"
+
+# install fisher
+curl -sL https://git.io/fisher | source
+ln -sf ~/.dotfiles/fish_plugins ~/.config/fish
+fisher update
+
+# link fish config
+mkdir -p ~/.config/fish/functions
+ln -sf ~/.dotfiles/config.fish ~/.config/fish
+ln -sf ~/.dotfiles/fish_user_key_bindings.fish ~/.config/fish/functions
 
 chsh -s /usr/bin/fish
 fish -l
