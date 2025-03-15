@@ -55,8 +55,6 @@ if [[ "$OSTYPE" = "darwin"* ]]; then
 	asdf reshim python
 fi
 
-# ghq conf
-go install github.com/x-motemen/ghq@latest
 mkdir ~/.ghq
 git config --global ghq.root "~/.ghq"
 
@@ -97,6 +95,12 @@ else
 	asdf plugin-add zig
 	asdf install zig latest
 	asdf global zig latest
+
+ 	# ghq setup
+	asdf plugin-add ghq
+        asdf install ghq latest
+	asdf global ghq latest
+
 	echo "run chsh -s /usr/bin/fish on your shell"
  	fish -l
 fi
