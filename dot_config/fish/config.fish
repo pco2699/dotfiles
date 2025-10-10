@@ -8,14 +8,6 @@ alias g='git'
 
 alias vi='nvim'
 
-uname -a | grep -q microsoft
-if [ $status -eq 0 ]
-    alias open='wsl-open'
-else
-    alias open='lemonade open'
-end
-
-
 set -x XDG_CONFIG_HOME ~/.config
 
 set -g theme_color_scheme solarized
@@ -40,5 +32,18 @@ set __fish_git_prompt_char_upstream_behind -
 
 
 # asdf configuration
-. ~/.asdf/asdf.fish
-. ~/.asdf/plugins/golang/set-env.fish
+# ASDF configuration code
+if test -z $ASDF_DATA_DIR
+    set _asdf_shims "$HOME/.asdf/shims"
+else
+    set _asdf_shims "$ASDF_DATA_DIR/shims"
+end
+
+# Do not use fish_add_path (added in Fish 3.2) because it
+# potentially changes the order of items in PATH
+if not contains $_asdf_shims $PATH
+    set -gx --prepend PATH $_asdf_shims
+end
+set --erase _asdf_shims
+
+
