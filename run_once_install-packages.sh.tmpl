@@ -42,10 +42,12 @@ rm -rf ~/.local/bin/README.md
 rm -rf ~/.local/bin/LICENSE
 rm -rf nvim-linux-x86_64.tar.gz
 
-# install win32yank
+{{- if (or (contains "microsoft" (.chezmoi.kernel.osrelease | lower)) (contains "wsl" (.chezmoi.kernel.osrelease | lower))) }}
+# install win32yank (WSL only)
 curl -LO https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip
 unzip win32yank-x64.zip -d ~/.local/bin
 rm -rf win32yank-x64.zip
+{{- end }}
 
 {{- else if eq .osid "linux-fedora" }}
 # Fedora
