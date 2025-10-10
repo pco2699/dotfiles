@@ -13,7 +13,7 @@ Managed with [chezmoi](https://chezmoi.io) for easy dotfiles management across m
 
 ### One-line install (recommended)
 ```bash
-sh -c "$(curl -fsLS https://raw.githubusercontent.com/pco2699/dotfiles/master/install.sh)"
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply pco2699
 ```
 
 ### Manual install

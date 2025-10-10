@@ -15,11 +15,17 @@ if ! command -v chezmoi &> /dev/null; then
     export PATH="$HOME/.local/bin:$PATH"
 fi
 
-DOTFILES_DIR=$(dirname $(realpath $0))
-
-# Initialize and apply chezmoi
-echo "Initializing chezmoi with source directory: $DOTFILES_DIR"
-chezmoi init --source="$DOTFILES_DIR"
+# Check if we're running from a cloned repo
+if [ -d "$(dirname "$0")/.git" ]; then
+    # Local install: use the current directory
+    DOTFILES_DIR=$(cd "$(dirname "$0")" && pwd)
+    echo "Initializing chezmoi with source directory: $DOTFILES_DIR"
+    chezmoi init --source="$DOTFILES_DIR"
+else
+    # Remote install: use GitHub directly
+    echo "Initializing chezmoi from GitHub: pco2699/dotfiles"
+    chezmoi init pco2699
+fi
 
 echo "Applying dotfiles..."
 chezmoi apply -v
