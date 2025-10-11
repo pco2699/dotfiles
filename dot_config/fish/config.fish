@@ -5,7 +5,6 @@ set -x PATH $GOPATH/bin $PATH
 set -x PATH $HOME/.cargo/bin $PATH
 
 alias g='git'
-
 alias vi='nvim'
 
 set -x XDG_CONFIG_HOME ~/.config
@@ -30,7 +29,6 @@ set __fish_git_prompt_char_stashstate '↩'
 set __fish_git_prompt_char_upstream_ahead '+'
 set __fish_git_prompt_char_upstream_behind -
 
-
 # asdf configuration
 # ASDF configuration code
 if test -z $ASDF_DATA_DIR
@@ -45,5 +43,3 @@ if not contains $_asdf_shims $PATH
     set -gx --prepend PATH $_asdf_shims
 end
 set --erase _asdf_shims
-
-
