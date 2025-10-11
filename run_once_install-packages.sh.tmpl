@@ -52,7 +52,7 @@ rm -rf win32yank-x64.zip
 {{- else if eq .osid "linux-fedora" }}
 # Fedora
 sudo dnf install -y dnf-plugins-core
-sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+sudo dnf config-manager addrepo --from-repofile=https://cli.github.com/packages/rpm/gh-cli.repo
 sudo dnf install -y fish tmux peco gh zip neovim
 
 # clipboard tools (Wayland and X11)
