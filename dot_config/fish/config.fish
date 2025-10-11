@@ -8,6 +8,7 @@ alias g='git'
 alias vi='nvim'
 
 set -x XDG_CONFIG_HOME ~/.config
+set -x EDITOR nvim
 
 set -g theme_color_scheme solarized
 set -g theme_nerd_fonts yes
