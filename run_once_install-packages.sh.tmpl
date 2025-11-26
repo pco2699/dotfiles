@@ -28,8 +28,10 @@ sudo apt-add-repository -y ppa:fish-shell/release-3
 sudo apt update
 sudo apt -y install fish tmux peco gh zip
 
-# clipboard tools (Wayland and X11)
-sudo apt -y install wl-clipboard xclip
+# clipboard tools (Wayland and X11) - only on desktop environments
+if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
+    sudo apt -y install wl-clipboard xclip
+fi
 
 # required by asdf
 sudo apt -y install dirmngr gpg curl gawk
@@ -68,8 +70,10 @@ fi
 sudo apt update
 sudo apt -y install fish tmux peco gh zip
 
-# clipboard tools (Wayland and X11)
-sudo apt -y install wl-clipboard xclip
+# clipboard tools (Wayland and X11) - only on desktop environments
+if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
+    sudo apt -y install wl-clipboard xclip
+fi
 
 # required by asdf
 sudo apt -y install dirmngr gpg curl gawk
@@ -115,8 +119,10 @@ if [ ! -f ~/.local/bin/peco ]; then
     rm -rf peco_linux_amd64 peco_linux_amd64.tar.gz
 fi
 
-# clipboard tools (Wayland and X11)
-sudo dnf install -y wl-clipboard xclip
+# clipboard tools (Wayland and X11) - only on desktop environments
+if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
+    sudo dnf install -y wl-clipboard xclip
+fi
 
 # required by asdf
 sudo dnf install -y curl git gawk
