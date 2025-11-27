@@ -38,7 +38,8 @@ Then in WSL, follow the Quick Install steps above.
 - **Neovim** with LazyVim configuration
 - **Tmux** with plugins and OS-specific configurations
 - **asdf** for managing runtime versions (Node.js, Python, Go, Zig)
-- **Development tools**: gh, ghq, peco, lemonade
+- **Development tools**: gh, ghq, peco
+- **Clipboard**: OSC 52 support for seamless clipboard sync over SSH
 
 ## Usage
 
