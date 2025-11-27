@@ -38,7 +38,8 @@ Then in WSL, follow the Quick Install steps above.
 - **Neovim** with LazyVim configuration
 - **Tmux** with plugins and OS-specific configurations
 - **asdf** for managing runtime versions (Node.js, Python, Go, Zig)
-- **Development tools**: gh, ghq, peco, lemonade
+- **Development tools**: gh, ghq, peco
+- **Clipboard**: tmux-yank for desktop, OSC 52 for SSH sessions
 
 ## Usage
 

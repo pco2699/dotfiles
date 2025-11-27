@@ -156,14 +156,6 @@ asdf reshim python
 mkdir -p ~/.ghq
 git config --global ghq.root "~/.ghq"
 
-{{- if ne .chezmoi.os "darwin" }}
-# install lemonade (not needed on macOS)
-if [ ! -f ~/.local/bin/lemonade ]; then
-    curl -LO https://github.com/lemonade-command/lemonade/releases/download/v1.1.1/lemonade_linux_amd64.tar.gz
-    tar -C ~/.local/bin -xzf lemonade_linux_amd64.tar.gz
-    rm -rf lemonade_linux_amd64.tar.gz
-fi
-{{- end }}
 
 # install fisher (fish plugin manager)
 if [ "$CODESPACES" != true ]; then

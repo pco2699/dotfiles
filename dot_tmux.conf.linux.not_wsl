@@ -6,41 +6,17 @@ set-option -g default-shell $SHELL
 unbind -T copy-mode-vi Enter
 bind-key -T copy-mode-vi v send-keys -X begin-selection
 
-# Clipboard integration for Linux (local)
-# Auto-detect: Wayland (wl-copy) or X11 (xclip)
-# For remote clipboard sync, see lemonade configuration at the bottom
+# Clipboard integration for Linux
+# Desktop environment (DISPLAY/WAYLAND_DISPLAY): Use tmux-yank plugin (wl-copy/xclip)
+# Server environment (no display): Use OSC 52 for SSH clipboard sync
 
-# Wayland support (wl-clipboard)
-if-shell 'command -v wl-copy' {
-    bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "wl-copy"
-    bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "wl-copy"
-    bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "wl-copy"
-    bind-key C-p run-shell "wl-paste | tmux load-buffer -" \; paste-buffer
-    bind-key ] run-shell "wl-paste | tmux load-buffer -" \; paste-buffer
+# Desktop Linux: tmux-yank handles clipboard via wl-copy/xclip
+# (Plugin configuration is in main dot_tmux.conf)
+
+# Server Linux: Enable OSC 52 clipboard for SSH sessions
+if-shell '[ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ]' {
+    # Enable OSC 52 clipboard support
+    # tmux will automatically send OSC 52 sequences on copy operations
+    set -g set-clipboard on
+    set -as terminal-features ',*:clipboard'
 }
-
-# X11 support (xclip) - fallback if wl-copy not available
-if-shell 'command -v xclip && ! command -v wl-copy' {
-    bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "xclip -selection clipboard -i"
-    bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "xclip -selection clipboard -i"
-    bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "xclip -selection clipboard -i"
-    bind-key C-p run-shell "xclip -selection clipboard -o | tmux load-buffer -" \; paste-buffer
-    bind-key ] run-shell "xclip -selection clipboard -o | tmux load-buffer -" \; paste-buffer
-}
-
-# -------------------------------------------------------------------
-# Optional: Remote clipboard sync with lemonade
-# -------------------------------------------------------------------
-# Uncomment the following section if you want to use lemonade for
-# clipboard sync over SSH. Make sure to:
-# 1. Install lemonade on both local and remote machines
-# 2. Configure ~/.config/lemonade.toml (see dot_config/lemonade.toml.tmpl)
-# 3. Run lemonade server on your local machine
-#
-# if-shell 'command -v lemonade' {
-#     bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "lemonade copy"
-#     bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "lemonade copy"
-#     bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "lemonade copy"
-#     bind-key C-p run-shell "lemonade paste | tmux load-buffer -" \; paste-buffer
-#     bind-key ] run-shell "lemonade paste | tmux load-buffer -" \; paste-buffer
-# }
