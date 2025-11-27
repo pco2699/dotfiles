@@ -6,37 +6,10 @@ set-option -g default-shell $SHELL
 unbind -T copy-mode-vi Enter
 bind-key -T copy-mode-vi v send-keys -X begin-selection
 
-# Clipboard integration for Linux
-# Auto-detect environment and use appropriate clipboard method:
-# - Desktop Linux (with DISPLAY/WAYLAND_DISPLAY): Use wl-copy/xclip for local clipboard
-# - Server Linux (no display): Use OSC 52 for remote clipboard sync over SSH
-
-# Desktop Linux: Wayland support (wl-clipboard)
-if-shell '[ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then command -v wl-copy; fi' {
-    bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "wl-copy"
-    bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "wl-copy"
-    bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "wl-copy"
-    bind-key C-p run-shell "wl-paste | tmux load-buffer -" \; paste-buffer
-    bind-key ] run-shell "wl-paste | tmux load-buffer -" \; paste-buffer
-}
-
-# Desktop Linux: X11 support (xclip) - fallback if wl-copy not available
-if-shell '[ -n "$DISPLAY" ] && command -v xclip && ! command -v wl-copy' {
-    bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "xclip -selection clipboard -i"
-    bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "xclip -selection clipboard -i"
-    bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "xclip -selection clipboard -i"
-    bind-key C-p run-shell "xclip -selection clipboard -o | tmux load-buffer -" \; paste-buffer
-    bind-key ] run-shell "xclip -selection clipboard -o | tmux load-buffer -" \; paste-buffer
-}
-
-# Server Linux: OSC 52 clipboard (for SSH sessions without display)
-# OSC 52 sends escape sequences to sync with the terminal's clipboard
-if-shell '[ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ]' {
-    # Enable OSC 52 clipboard support for server environments
-    set -g set-clipboard on
-    set -as terminal-features ',*:clipboard'
-
-    bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "printf '\\033]52;c;%%s\\a' \"$(base64 -w0)\""
-    bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "printf '\\033]52;c;%%s\\a' \"$(base64 -w0)\""
-    bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "printf '\\033]52;c;%%s\\a' \"$(base64 -w0)\""
-}
+# Clipboard integration is handled by tmux-yank plugin
+# tmux-yank automatically detects and uses:
+# - OSC 52 for SSH sessions
+# - wl-copy for Wayland (Linux desktop)
+# - xclip for X11 (Linux desktop)
+# - pbcopy for macOS
+# No additional configuration needed!
