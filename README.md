@@ -39,7 +39,7 @@ Then in WSL, follow the Quick Install steps above.
 - **Tmux** with plugins and OS-specific configurations
 - **asdf** for managing runtime versions (Node.js, Python, Go, Zig)
 - **Development tools**: gh, ghq, peco
-- **Clipboard**: OSC 52 support for seamless clipboard sync over SSH
+- **Clipboard**: tmux-yank for desktop, OSC 52 for SSH sessions
 
 ## Usage
 
