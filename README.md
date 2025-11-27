@@ -11,17 +11,8 @@ Managed with [chezmoi](https://chezmoi.io) for easy dotfiles management across m
 
 ## Quick Install
 
-### One-line install (recommended)
 ```bash
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply pco2699
-```
-
-### Manual install
-```bash
-git clone https://github.com/pco2699/dotfiles.git ~/.dotfiles
-cd ~/.dotfiles
-chmod +x install.sh
-./install.sh
+sh -c "$(curl -fsLS get.chezmoi.io)" -- -b ~/.local/bin init --apply pco2699
 ```
 
 ### For Windows + WSL
