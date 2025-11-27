@@ -1,0 +1,7 @@
+[ghq]
+	root = ~/.ghq
+[user]
+	name = pco2699
+	email = aenkun@gmail.com
+[url "git@github.com:"]
+	insteadOf = https://github.com/
