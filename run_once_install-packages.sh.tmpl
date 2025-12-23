@@ -13,7 +13,7 @@ brew install neovim
 brew install go
 brew install ghq
 brew install peco
-brew install gh
+brew install gh fd ripgrep zoxide bat fzf
 # TODO: add powerline
 
 {{- else if eq .osid "linux-ubuntu" }}
@@ -26,7 +26,8 @@ if [ ! -f /etc/apt/sources.list.d/github-cli.list ]; then
 fi
 sudo apt-add-repository -y ppa:fish-shell/release-3
 sudo apt update
-sudo apt -y install fish tmux peco gh zip
+sudo apt -y install gpg
+sudo apt -y install fish tmux peco gh zip fd ripgrep zoxide bat fzf eza
 
 # clipboard tools (Wayland and X11) - only on desktop environments
 if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
@@ -34,7 +35,7 @@ if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
 fi
 
 # required by asdf
-sudo apt -y install dirmngr gpg curl gawk
+sudo apt -y install dirmngr curl gawk
 
 # required by python
 sudo apt -y install build-essential libssl-dev zlib1g-dev \
@@ -68,7 +69,8 @@ if [ ! -f /etc/apt/sources.list.d/github-cli.list ]; then
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
 fi
 sudo apt update
-sudo apt -y install fish tmux peco gh zip
+sudo apt -y install gpg
+sudo apt -y install fish tmux peco gh zip fd ripgrep zoxide bat fzf eza
 
 # clipboard tools (Wayland and X11) - only on desktop environments
 if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
@@ -76,7 +78,7 @@ if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
 fi
 
 # required by asdf
-sudo apt -y install dirmngr gpg curl gawk
+sudo apt -y install dirmngr curl gawk
 
 # required by python
 sudo apt -y install build-essential libssl-dev zlib1g-dev \
@@ -107,7 +109,7 @@ sudo dnf install -y dnf-plugins-core
 if [ ! -f /etc/yum.repos.d/gh-cli.repo ]; then
     sudo dnf config-manager addrepo --from-repofile=https://cli.github.com/packages/rpm/gh-cli.repo
 fi
-sudo dnf install -y fish tmux gh zip neovim
+sudo dnf install -y fish tmux gh zip neovim fzf fd ripgrep zoxide bat
 
 # peco (not available in Fedora repos, install from GitHub releases)
 if [ ! -f ~/.local/bin/peco ]; then
@@ -182,6 +184,12 @@ if [ "$CODESPACES" != true ]; then
     asdf install ghq latest
     asdf global ghq latest
 
+
+    {{- if eq .osid "linux-fedora" }}
+      asdf plugin-add eza 2>/dev/null || true
+      asdf install eza latest
+      asdf global eza latest
+    {{- end }}
     echo "================================================"
     echo "Installation complete!"
     echo "Run 'chsh -s /usr/bin/fish' to set fish as your default shell"
