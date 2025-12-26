@@ -50,12 +50,19 @@ jobs:
         with:
           path: /tmp/dotfiles-repo
 
+      - name: Fix file permissions
+        run: |
+          chown -R testuser:testuser /tmp/dotfiles-repo
+
       - name: Install chezmoi and apply dotfiles
         shell: bash
         run: |
           # Switch to test user and run chezmoi
           su - testuser -c "
-            set -e
+            set -ex
+
+            # Skip long-running asdf installations in CI
+            export CODESPACES=true
 
             # Install chezmoi
             export PATH=\$HOME/.local/bin:\$PATH
@@ -69,31 +76,73 @@ jobs:
         shell: bash
         run: |
           su - testuser -c "
-            set -e
+            set -x
             export PATH=\$HOME/.local/bin:\$HOME/.asdf/shims:\$PATH
 
+            echo '=== Checking installed tools ==='
+
             # Check if fish is installed
-            which fish || echo 'fish not found in PATH'
+            if which fish; then
+              echo '✓ fish is installed'
+              fish --version || true
+            else
+              echo '✗ fish not found'
+              exit 1
+            fi
 
             # Check if tmux is installed
-            which tmux && tmux -V || echo 'tmux not found'
+            if which tmux; then
+              echo '✓ tmux is installed'
+              tmux -V || true
+            else
+              echo '✗ tmux not found'
+              exit 1
+            fi
 
             # Check if nvim is installed
-            which nvim && nvim --version | head -n 1 || echo 'nvim not found'
+            if which nvim; then
+              echo '✓ nvim is installed'
+              nvim --version | head -n 1 || true
+            else
+              echo '✗ nvim not found'
+              exit 1
+            fi
 
             # Check if asdf is installed
             if [ -d ~/.asdf ]; then
-              echo 'asdf installed'
+              echo '✓ asdf directory exists'
               source ~/.asdf/asdf.sh
-              asdf --version || echo 'asdf command failed'
+              asdf --version || true
             else
-              echo 'asdf not installed'
+              echo '✗ asdf not installed'
+              exit 1
             fi
 
+            echo '=== Checking config files ==='
+
             # Check basic config files
-            test -f ~/.config/fish/config.fish && echo 'fish config exists' || echo 'fish config missing'
-            test -f ~/.tmux.conf && echo 'tmux config exists' || echo 'tmux config missing'
-            test -f ~/.gitconfig && echo 'git config exists' || echo 'git config missing'
+            if [ -f ~/.config/fish/config.fish ]; then
+              echo '✓ fish config exists'
+            else
+              echo '✗ fish config missing'
+              exit 1
+            fi
+
+            if [ -f ~/.tmux.conf ]; then
+              echo '✓ tmux config exists'
+            else
+              echo '✗ tmux config missing'
+              exit 1
+            fi
+
+            if [ -f ~/.gitconfig ]; then
+              echo '✓ git config exists'
+            else
+              echo '✗ git config missing'
+              exit 1
+            fi
+
+            echo '=== All checks passed ==='
           "
 
   test-macos:
@@ -106,6 +155,11 @@ jobs:
 
       - name: Install chezmoi and apply dotfiles
         run: |
+          set -ex
+
+          # Skip long-running asdf installations in CI
+          export CODESPACES=true
+
           # Install chezmoi
           sh -c "$(curl -fsLS get.chezmoi.io)" -- -b ~/.local/bin
           export PATH=$HOME/.local/bin:$PATH
@@ -115,27 +169,73 @@ jobs:
 
       - name: Verify installation
         run: |
+          set -x
+
+          # Add Homebrew to PATH
+          eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || eval "$(/usr/local/bin/brew shellenv)" 2>/dev/null || true
           export PATH=$HOME/.local/bin:$HOME/.asdf/shims:$PATH
 
+          echo '=== Checking installed tools ==='
+
           # Check if fish is installed
-          which fish && fish --version || echo 'fish not found'
+          if which fish; then
+            echo '✓ fish is installed'
+            fish --version || true
+          else
+            echo '✗ fish not found'
+            exit 1
+          fi
 
           # Check if tmux is installed
-          which tmux && tmux -V || echo 'tmux not found'
+          if which tmux; then
+            echo '✓ tmux is installed'
+            tmux -V || true
+          else
+            echo '✗ tmux not found'
+            exit 1
+          fi
 
           # Check if nvim is installed
-          which nvim && nvim --version | head -n 1 || echo 'nvim not found'
+          if which nvim; then
+            echo '✓ nvim is installed'
+            nvim --version | head -n 1 || true
+          else
+            echo '✗ nvim not found'
+            exit 1
+          fi
 
           # Check if asdf is installed
           if [ -d ~/.asdf ]; then
-            echo 'asdf installed'
+            echo '✓ asdf directory exists'
             source ~/.asdf/asdf.sh
-            asdf --version || echo 'asdf command failed'
+            asdf --version || true
           else
-            echo 'asdf not installed'
+            echo '✗ asdf not installed'
+            exit 1
           fi
 
+          echo '=== Checking config files ==='
+
           # Check basic config files
-          test -f ~/.config/fish/config.fish && echo 'fish config exists' || echo 'fish config missing'
-          test -f ~/.tmux.conf && echo 'tmux config exists' || echo 'tmux config missing'
-          test -f ~/.gitconfig && echo 'git config exists' || echo 'git config missing'
+          if [ -f ~/.config/fish/config.fish ]; then
+            echo '✓ fish config exists'
+          else
+            echo '✗ fish config missing'
+            exit 1
+          fi
+
+          if [ -f ~/.tmux.conf ]; then
+            echo '✓ tmux config exists'
+          else
+            echo '✗ tmux config missing'
+            exit 1
+          fi
+
+          if [ -f ~/.gitconfig ]; then
+            echo '✓ git config exists'
+          else
+            echo '✗ git config missing'
+            exit 1
+          fi
+
+          echo '=== All checks passed ==='
