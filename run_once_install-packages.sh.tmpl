@@ -129,11 +129,12 @@ sudo dnf install -y fish tmux gh zip neovim fzf fd-find ripgrep zoxide bat
 if [ ! -f ~/.local/bin/peco ]; then
     # resolve the latest version from the release redirect (avoids GitHub API rate limits)
     PECO_VERSION=$(curl -fsSLo /dev/null -w '%{url_effective}' https://github.com/peco/peco/releases/latest | sed -E 's|.*/v||')
-    curl -LO https://github.com/peco/peco/releases/download/v${PECO_VERSION}/peco_linux_amd64.tar.gz
-    tar xzf peco_linux_amd64.tar.gz
-    mkdir -p ~/.local/bin
-    mv peco_linux_amd64/peco ~/.local/bin/
-    rm -rf peco_linux_amd64 peco_linux_amd64.tar.gz
+    curl -fLO "https://github.com/peco/peco/releases/download/v${PECO_VERSION}/peco_${PECO_VERSION}_linux_amd64.tar.gz"
+    mkdir -p ~/.local/bin peco_extract
+    tar xzf "peco_${PECO_VERSION}_linux_amd64.tar.gz" -C peco_extract
+    # the binary's location inside the archive has changed between releases
+    find peco_extract -type f -name peco -exec mv {} ~/.local/bin/ \;
+    rm -rf peco_extract "peco_${PECO_VERSION}_linux_amd64.tar.gz"
 fi
 
 # clipboard tools (Wayland and X11) - only on desktop environments
