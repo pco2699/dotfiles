@@ -8,8 +8,9 @@ echo "Installing packages for {{ .chezmoi.os }} ({{ .osid }})..."
 # macOS (Homebrew)
 brew update
 brew install fish
-brew install tmux
 brew install neovim
+brew install mise
+brew install herdr
 brew install go
 brew install ghq
 brew install peco
@@ -27,7 +28,7 @@ fi
 sudo apt-add-repository -y ppa:fish-shell/release-3
 sudo apt update
 sudo apt -y install gpg
-sudo apt -y install fish tmux peco gh zip fd-find ripgrep zoxide bat fzf eza
+sudo apt -y install fish peco gh zip fd-find ripgrep zoxide bat fzf eza
 
 # fd-find installs the binary as fdfind on Debian/Ubuntu
 mkdir -p ~/.local/bin
@@ -35,13 +36,8 @@ if [ ! -e ~/.local/bin/fd ]; then
     ln -s "$(command -v fdfind)" ~/.local/bin/fd
 fi
 
-# clipboard tools (Wayland and X11) - only on desktop environments
-if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
-    sudo apt -y install wl-clipboard xclip
-fi
-
-# required by asdf
-sudo apt -y install dirmngr curl gawk
+# required by mise
+sudo apt -y install curl git
 
 # required by python
 sudo apt -y install build-essential libssl-dev zlib1g-dev \
@@ -57,15 +53,6 @@ if [ ! -f ~/.local/bin/nvim ]; then
     rm -rf ~/.local/bin/LICENSE
     rm -rf nvim-linux-x86_64.tar.gz
 fi
-
-{{- if (or (contains "microsoft" (.chezmoi.kernel.osrelease | lower)) (contains "wsl" (.chezmoi.kernel.osrelease | lower))) }}
-# install win32yank (WSL only)
-if [ ! -f ~/.local/bin/win32yank.exe ]; then
-    curl -LO https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip
-    unzip -o win32yank-x64.zip -d ~/.local/bin
-    rm -rf win32yank-x64.zip
-fi
-{{- end }}
 
 {{- else if eq .osid "linux-debian" }}
 # Debian
@@ -77,7 +64,7 @@ if [ ! -f /etc/apt/sources.list.d/github-cli.list ]; then
 fi
 sudo apt update
 sudo apt -y install gpg
-sudo apt -y install fish tmux peco gh zip fd-find ripgrep zoxide bat fzf eza
+sudo apt -y install fish peco gh zip fd-find ripgrep zoxide bat fzf eza
 
 # fd-find installs the binary as fdfind on Debian/Ubuntu
 mkdir -p ~/.local/bin
@@ -85,13 +72,8 @@ if [ ! -e ~/.local/bin/fd ]; then
     ln -s "$(command -v fdfind)" ~/.local/bin/fd
 fi
 
-# clipboard tools (Wayland and X11) - only on desktop environments
-if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
-    sudo apt -y install wl-clipboard xclip
-fi
-
-# required by asdf
-sudo apt -y install dirmngr curl gawk
+# required by mise
+sudo apt -y install curl git
 
 # required by python
 sudo apt -y install build-essential libssl-dev zlib1g-dev \
@@ -108,22 +90,13 @@ if [ ! -f ~/.local/bin/nvim ]; then
     rm -rf nvim-linux-x86_64.tar.gz
 fi
 
-{{- if (or (contains "microsoft" (.chezmoi.kernel.osrelease | lower)) (contains "wsl" (.chezmoi.kernel.osrelease | lower))) }}
-# install win32yank (WSL only)
-if [ ! -f ~/.local/bin/win32yank.exe ]; then
-    curl -LO https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip
-    unzip -o win32yank-x64.zip -d ~/.local/bin
-    rm -rf win32yank-x64.zip
-fi
-{{- end }}
-
 {{- else if eq .osid "linux-fedora" }}
 # Fedora
 sudo dnf install -y dnf-plugins-core
 if [ ! -f /etc/yum.repos.d/gh-cli.repo ]; then
     sudo dnf config-manager addrepo --from-repofile=https://cli.github.com/packages/rpm/gh-cli.repo
 fi
-sudo dnf install -y fish tmux gh zip neovim fzf fd-find ripgrep zoxide bat
+sudo dnf install -y fish gh zip neovim fzf fd-find ripgrep zoxide bat
 
 # peco (not available in Fedora repos, install from GitHub releases)
 if [ ! -f ~/.local/bin/peco ]; then
@@ -137,13 +110,8 @@ if [ ! -f ~/.local/bin/peco ]; then
     rm -rf peco_extract "peco_${PECO_VERSION}_linux_amd64.tar.gz"
 fi
 
-# clipboard tools (Wayland and X11) - only on desktop environments
-if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
-    sudo dnf install -y wl-clipboard xclip
-fi
-
-# required by asdf
-sudo dnf install -y curl git gawk
+# required by mise
+sudo dnf install -y curl git
 
 # required by python
 sudo dnf install -y gcc make zlib-devel bzip2 bzip2-devel readline-devel \
@@ -152,19 +120,21 @@ sudo dnf install -y gcc make zlib-devel bzip2 bzip2-devel readline-devel \
 {{- else }}
 # Generic Linux - install what we can
 echo "Unsupported OS: {{ .osid }}"
-echo "Please install packages manually: fish, tmux, neovim, gh, peco, zip"
+echo "Please install packages manually: fish, neovim, gh, peco, zip"
 {{- end }}
 
-# install asdf
-if [ ! -d ~/.asdf ]; then
-    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1
+# install mise (runtime version manager, replaces asdf)
+{{- if ne .chezmoi.os "darwin" }}
+if ! command -v mise >/dev/null 2>&1 && [ ! -f ~/.local/bin/mise ]; then
+    curl -fsSL https://mise.run | sh
 fi
-source "$HOME/.asdf/asdf.sh"
+{{- end }}
+export PATH="$HOME/.local/bin:$PATH"
 
-# tmux plugin manager
-if [ ! -d ~/.tmux/plugins/tpm ]; then
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-fi
+{{- if ne .chezmoi.os "darwin" }}
+# install herdr (terminal multiplexer, replaces tmux) - installed via brew on macOS
+mise use -g herdr@latest
+{{- end }}
 
 # ghq setup
 mkdir -p ~/.ghq
@@ -175,35 +145,14 @@ git config --global ghq.root "~/.ghq"
 if [ "$CODESPACES" != true ]; then
     fish -c "curl -sL https://git.io/fisher | source; fisher update" || true
 
-    # install asdf plugins
-    asdf plugin add nodejs 2>/dev/null || true
-    asdf install nodejs latest
-    asdf global nodejs latest
-
-    asdf plugin-add python 2>/dev/null || true
-    asdf install python latest
-    asdf global python latest
-    {{- if eq .chezmoi.os "darwin" }}
-    asdf reshim python
-    {{- end }}
-
-    asdf plugin-add golang 2>/dev/null || true
-    asdf install golang latest
-    asdf global golang latest
-
-    asdf plugin-add zig 2>/dev/null || true
-    asdf install zig latest
-    asdf global zig latest
-
-    asdf plugin-add ghq 2>/dev/null || true
-    asdf install ghq latest
-    asdf global ghq latest
-
-
+    # install language runtimes with mise
+    mise use -g node@latest
+    mise use -g python@latest
+    mise use -g go@latest
+    mise use -g zig@latest
+    mise use -g ghq@latest
     {{- if eq .osid "linux-fedora" }}
-      asdf plugin-add eza 2>/dev/null || true
-      asdf install eza latest
-      asdf global eza latest
+    mise use -g eza@latest
     {{- end }}
     echo "================================================"
     echo "Installation complete!"
