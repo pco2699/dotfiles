@@ -27,7 +27,17 @@ fi
 sudo apt-add-repository -y ppa:fish-shell/release-3
 sudo apt update
 sudo apt -y install gpg
-sudo apt -y install fish tmux peco gh zip fd ripgrep zoxide bat fzf eza
+sudo apt -y install fish tmux peco gh zip fd-find ripgrep zoxide bat fzf eza
+
+# fd/bat install as fdfind/batcat on Debian/Ubuntu due to name conflicts;
+# symlink to the expected names so aliases relying on `fd`/`bat` work
+mkdir -p ~/.local/bin
+if [ ! -e ~/.local/bin/fd ] && command -v fdfind >/dev/null 2>&1; then
+    ln -sf "$(command -v fdfind)" ~/.local/bin/fd
+fi
+if [ ! -e ~/.local/bin/bat ] && command -v batcat >/dev/null 2>&1; then
+    ln -sf "$(command -v batcat)" ~/.local/bin/bat
+fi
 
 # clipboard tools (Wayland and X11) - only on desktop environments
 if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
@@ -70,7 +80,17 @@ if [ ! -f /etc/apt/sources.list.d/github-cli.list ]; then
 fi
 sudo apt update
 sudo apt -y install gpg
-sudo apt -y install fish tmux peco gh zip fd ripgrep zoxide bat fzf eza
+sudo apt -y install fish tmux peco gh zip fd-find ripgrep zoxide bat fzf eza
+
+# fd/bat install as fdfind/batcat on Debian/Ubuntu due to name conflicts;
+# symlink to the expected names so aliases relying on `fd`/`bat` work
+mkdir -p ~/.local/bin
+if [ ! -e ~/.local/bin/fd ] && command -v fdfind >/dev/null 2>&1; then
+    ln -sf "$(command -v fdfind)" ~/.local/bin/fd
+fi
+if [ ! -e ~/.local/bin/bat ] && command -v batcat >/dev/null 2>&1; then
+    ln -sf "$(command -v batcat)" ~/.local/bin/bat
+fi
 
 # clipboard tools (Wayland and X11) - only on desktop environments
 if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
@@ -109,7 +129,7 @@ sudo dnf install -y dnf-plugins-core
 if [ ! -f /etc/yum.repos.d/gh-cli.repo ]; then
     sudo dnf config-manager addrepo --from-repofile=https://cli.github.com/packages/rpm/gh-cli.repo
 fi
-sudo dnf install -y fish tmux gh zip neovim fzf fd ripgrep zoxide bat
+sudo dnf install -y fish tmux gh zip neovim fzf fd-find ripgrep zoxide bat
 
 # peco (not available in Fedora repos, install from GitHub releases)
 if [ ! -f ~/.local/bin/peco ]; then
