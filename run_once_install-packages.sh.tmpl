@@ -27,7 +27,13 @@ fi
 sudo apt-add-repository -y ppa:fish-shell/release-3
 sudo apt update
 sudo apt -y install gpg
-sudo apt -y install fish tmux peco gh zip fd ripgrep zoxide bat fzf eza
+sudo apt -y install fish tmux peco gh zip fd-find ripgrep zoxide bat fzf eza
+
+# fd-find installs the binary as fdfind on Debian/Ubuntu
+mkdir -p ~/.local/bin
+if [ ! -e ~/.local/bin/fd ]; then
+    ln -s "$(command -v fdfind)" ~/.local/bin/fd
+fi
 
 # clipboard tools (Wayland and X11) - only on desktop environments
 if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
@@ -44,6 +50,7 @@ sudo apt -y install build-essential libssl-dev zlib1g-dev \
 
 # install nvim
 if [ ! -f ~/.local/bin/nvim ]; then
+    mkdir -p ~/.local
     curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
     tar -C ~/.local/ --strip-components 1 -xzf nvim-linux-x86_64.tar.gz
     rm -rf ~/.local/bin/README.md
@@ -70,7 +77,13 @@ if [ ! -f /etc/apt/sources.list.d/github-cli.list ]; then
 fi
 sudo apt update
 sudo apt -y install gpg
-sudo apt -y install fish tmux peco gh zip fd ripgrep zoxide bat fzf eza
+sudo apt -y install fish tmux peco gh zip fd-find ripgrep zoxide bat fzf eza
+
+# fd-find installs the binary as fdfind on Debian/Ubuntu
+mkdir -p ~/.local/bin
+if [ ! -e ~/.local/bin/fd ]; then
+    ln -s "$(command -v fdfind)" ~/.local/bin/fd
+fi
 
 # clipboard tools (Wayland and X11) - only on desktop environments
 if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
@@ -87,6 +100,7 @@ sudo apt -y install build-essential libssl-dev zlib1g-dev \
 
 # install nvim
 if [ ! -f ~/.local/bin/nvim ]; then
+    mkdir -p ~/.local
     curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
     tar -C ~/.local/ --strip-components 1 -xzf nvim-linux-x86_64.tar.gz
     rm -rf ~/.local/bin/README.md
@@ -109,11 +123,12 @@ sudo dnf install -y dnf-plugins-core
 if [ ! -f /etc/yum.repos.d/gh-cli.repo ]; then
     sudo dnf config-manager addrepo --from-repofile=https://cli.github.com/packages/rpm/gh-cli.repo
 fi
-sudo dnf install -y fish tmux gh zip neovim fzf fd ripgrep zoxide bat
+sudo dnf install -y fish tmux gh zip neovim fzf fd-find ripgrep zoxide bat
 
 # peco (not available in Fedora repos, install from GitHub releases)
 if [ ! -f ~/.local/bin/peco ]; then
-    PECO_VERSION=$(curl -s https://api.github.com/repos/peco/peco/releases/latest | grep '"tag_name"' | sed -E 's/.*"v([^"]+)".*/\1/')
+    # resolve the latest version from the release redirect (avoids GitHub API rate limits)
+    PECO_VERSION=$(curl -fsSLo /dev/null -w '%{url_effective}' https://github.com/peco/peco/releases/latest | sed -E 's|.*/v||')
     curl -LO https://github.com/peco/peco/releases/download/v${PECO_VERSION}/peco_linux_amd64.tar.gz
     tar xzf peco_linux_amd64.tar.gz
     mkdir -p ~/.local/bin
@@ -150,10 +165,6 @@ if [ ! -d ~/.tmux/plugins/tpm ]; then
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
 
-{{- if eq .chezmoi.os "darwin" }}
-asdf reshim python
-{{- end }}
-
 # ghq setup
 mkdir -p ~/.ghq
 git config --global ghq.root "~/.ghq"
@@ -171,6 +182,9 @@ if [ "$CODESPACES" != true ]; then
     asdf plugin-add python 2>/dev/null || true
     asdf install python latest
     asdf global python latest
+    {{- if eq .chezmoi.os "darwin" }}
+    asdf reshim python
+    {{- end }}
 
     asdf plugin-add golang 2>/dev/null || true
     asdf install golang latest

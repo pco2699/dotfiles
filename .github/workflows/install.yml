@@ -1,0 +1,118 @@
+name: Test install
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Take the same fast path as Codespaces: skip fisher and the asdf
+  # language-runtime installs (compiling Python/Node/Go in CI is too slow).
+  # All the distro-specific package installation still runs in full.
+  CODESPACES: "true"
+
+jobs:
+  ubuntu:
+    name: Ubuntu (runner)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install chezmoi
+        run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+
+      - name: chezmoi init + apply
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          chezmoi init --apply --source="$GITHUB_WORKSPACE"
+
+      - name: Verify installation
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          for cmd in fish tmux nvim gh peco fd rg zoxide batcat fzf eza; do
+            command -v "$cmd" || { echo "::error::$cmd not found"; exit 1; }
+          done
+          test -f ~/.config/fish/config.fish
+          test -f ~/.tmux.conf
+          test -f ~/.config/nvim/init.lua
+          test -d ~/.asdf
+          test -d ~/.tmux/plugins/tpm
+
+  linux-container:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container: ${{ matrix.image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Debian 13
+            image: debian:13
+            bootstrap: apt-get update && apt-get install -y sudo curl git ca-certificates
+            # bat installs as batcat on Debian; eza comes from apt
+            commands: fish tmux nvim gh peco fd rg zoxide batcat fzf eza
+          - name: Fedora (latest)
+            image: fedora:latest
+            bootstrap: dnf install -y sudo curl git tar gzip
+            # bat installs as bat on Fedora; eza is installed via asdf (skipped in CI)
+            commands: fish tmux nvim gh peco fd rg zoxide bat fzf
+    steps:
+      # A bare container image needs the tools chezmoi's install script
+      # takes for granted (a fresh interactive machine would have these).
+      - name: Install prerequisites
+        run: ${{ matrix.bootstrap }}
+
+      - uses: actions/checkout@v4
+
+      - name: Install chezmoi
+        run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+
+      - name: chezmoi init + apply
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          chezmoi init --apply --source="$GITHUB_WORKSPACE"
+
+      - name: Verify installation
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          for cmd in ${{ matrix.commands }}; do
+            command -v "$cmd" || { echo "::error::$cmd not found"; exit 1; }
+          done
+          test -f ~/.config/fish/config.fish
+          test -f ~/.tmux.conf
+          test -f ~/.config/nvim/init.lua
+          test -d ~/.asdf
+          test -d ~/.tmux/plugins/tpm
+
+  macos:
+    name: macOS
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install chezmoi
+        run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+
+      - name: chezmoi init + apply
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          chezmoi init --apply --source="$GITHUB_WORKSPACE"
+
+      - name: Verify installation
+        run: |
+          for cmd in fish tmux nvim gh peco fd rg zoxide bat fzf ghq go; do
+            command -v "$cmd" || { echo "::error::$cmd not found"; exit 1; }
+          done
+          test -f ~/.config/fish/config.fish
+          test -f ~/.tmux.conf
+          test -f ~/.config/nvim/init.lua
+          test -d ~/.asdf
+          test -d ~/.tmux/plugins/tpm

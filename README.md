@@ -1,5 +1,7 @@
 # pco2699's dotfiles
 
+[![Test install](https://github.com/pco2699/dotfiles/actions/workflows/install.yml/badge.svg)](https://github.com/pco2699/dotfiles/actions/workflows/install.yml)
+
 Managed with [chezmoi](https://chezmoi.io) for easy dotfiles management across multiple machines.
 
 ## Supported Platforms
