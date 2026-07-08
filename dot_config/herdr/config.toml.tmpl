@@ -16,14 +16,17 @@ focus_pane_up = "prefix+k"
 focus_pane_right = "prefix+l"
 
 # cycle tabs like tmux windows (prefix+ctrl+h/l), plus herdr defaults,
-# plus direct ctrl+,/. (no prefix) like browser/editor tab switching.
-# Plain ctrl+comma/period only transmit on terminals with a modern keyboard
-# protocol (iTerm2/Kitty/WezTerm/Ghostty), so WSL (Windows Terminal, which
-# lacks that and also hard-binds ctrl+, to Open Settings) gets ctrl+alt+
-# instead, which transmits everywhere.
+# plus a direct (no-prefix) shortcut like browser/editor tab switching.
+# Ctrl+comma/period have no legacy terminal escape sequence at all (unlike
+# letters, which map to classic ASCII control codes) - only terminals with
+# a modern keyboard protocol (iTerm2/Kitty/WezTerm/Ghostty) can transmit
+# them, and adding Alt doesn't help since there's nothing for the Alt/ESC
+# prefix trick to prefix. Windows Terminal (WSL) lacks that protocol and
+# also hard-binds ctrl+, to Open Settings, so WSL uses ctrl+alt+left/right
+# instead, which has robust escape-sequence support everywhere.
 {{- if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
-previous_tab = ["prefix+p", "prefix+ctrl+h", "ctrl+alt+comma"]
-next_tab = ["prefix+n", "prefix+ctrl+l", "ctrl+alt+period"]
+previous_tab = ["prefix+p", "prefix+ctrl+h", "ctrl+alt+left"]
+next_tab = ["prefix+n", "prefix+ctrl+l", "ctrl+alt+right"]
 {{- else }}
 previous_tab = ["prefix+p", "prefix+ctrl+h", "ctrl+comma"]
 next_tab = ["prefix+n", "prefix+ctrl+l", "ctrl+period"]
