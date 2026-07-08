@@ -36,7 +36,7 @@ jobs:
       - name: Verify installation
         run: |
           export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
-          for cmd in fish nvim gh fd rg zoxide bat fzf eza mise herdr; do
+          for cmd in fish nvim gh fd rg zoxide bat fzf eza mise herdr claude; do
             command -v "$cmd" || { echo "::error::$cmd not found"; exit 1; }
           done
           test -f ~/.config/fish/config.fish
@@ -56,12 +56,12 @@ jobs:
             image: debian:13
             bootstrap: apt-get update && apt-get install -y sudo curl git ca-certificates
             # all CLI tools now come from mise under their canonical names
-            commands: fish nvim gh fd rg zoxide bat fzf eza mise herdr
+            commands: fish nvim gh fd rg zoxide bat fzf eza mise herdr claude
           - name: Fedora (latest)
             image: fedora:latest
             bootstrap: dnf install -y sudo curl git tar gzip
             # all CLI tools now come from mise under their canonical names
-            commands: fish nvim gh fd rg zoxide bat fzf eza mise herdr
+            commands: fish nvim gh fd rg zoxide bat fzf eza mise herdr claude
     steps:
       # A bare container image needs the tools chezmoi's install script
       # takes for granted (a fresh interactive machine would have these).
@@ -108,7 +108,7 @@ jobs:
           # go and the other language runtimes are skipped in CI (CODESPACES),
           # so only the always-installed CLI tools are verified here.
           export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
-          for cmd in fish nvim gh fd rg zoxide bat fzf ghq mise herdr; do
+          for cmd in fish nvim gh fd rg zoxide bat fzf ghq mise herdr claude; do
             command -v "$cmd" || { echo "::error::$cmd not found"; exit 1; }
           done
           test -f ~/.config/fish/config.fish

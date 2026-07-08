@@ -31,6 +31,7 @@ Then in WSL, follow the Quick Install steps above.
 - **Neovim** with LazyVim configuration
 - **Herdr** (terminal multiplexer) with tmux-style keybindings
 - **mise** for managing runtimes (Node.js, Python, Go, Rust, Zig) and CLI tools (neovim, gh, ghq, ripgrep, fd, bat, fzf, zoxide, eza, herdr)
+- **Claude Code** CLI (with `claude`/`cl` fish wrappers that run in auto permission mode)
 - **Clipboard**: OSC 52 everywhere (no external clipboard tools needed)
 
 ## Usage
