@@ -16,9 +16,13 @@ focus_pane_up = "prefix+k"
 focus_pane_right = "prefix+l"
 
 # cycle tabs like tmux windows (prefix+ctrl+h/l), plus herdr defaults,
-# plus direct ctrl+,/ctrl+. (no prefix) like browser/editor tab switching
-previous_tab = ["prefix+p", "prefix+ctrl+h", "ctrl+comma"]
-next_tab = ["prefix+n", "prefix+ctrl+l", "ctrl+period"]
+# plus direct ctrl+alt+,/. (no prefix) like browser/editor tab switching.
+# Plain ctrl+comma/period only transmit on terminals with a modern keyboard
+# protocol (iTerm2/Kitty/WezTerm/Ghostty); Windows Terminal lacks that (and
+# also hard-binds ctrl+, to Open Settings), so ctrl+alt+ is used instead -
+# it transmits everywhere.
+previous_tab = ["prefix+p", "prefix+ctrl+h", "ctrl+alt+comma"]
+next_tab = ["prefix+n", "prefix+ctrl+l", "ctrl+alt+period"]
 
 # vi-style copy mode (same key as tmux)
 copy_mode = "prefix+["
