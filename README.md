@@ -32,6 +32,7 @@ Then in WSL, follow the Quick Install steps above.
 - **Herdr** (terminal multiplexer) with tmux-style keybindings
 - **mise** for managing runtime versions (Node.js, Python, Go, Zig)
 - **Development tools**: gh, ghq, fzf
+- **Claude Code** CLI
 - **Clipboard**: OSC 52 everywhere (no external clipboard tools needed)
 
 ## Usage
