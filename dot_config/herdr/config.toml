@@ -25,6 +25,9 @@ copy_mode = "prefix+["
 # pane resize is modal in herdr: prefix+r then h/j/k/l
 resize_mode = "prefix+r"
 
+[theme]
+name = "tokyo-night"
+
 [ui]
 # mouse support (tmux: mouse on)
 mouse_capture = true

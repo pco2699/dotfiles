@@ -18,8 +18,21 @@ alias find='fd'
 set -x XDG_CONFIG_HOME ~/.config
 set -x EDITOR nvim
 
-set -g theme_color_scheme solarized
-set -g theme_nerd_fonts yes
+# FZF configuration (tokyonight)
+set -gx FZF_DEFAULT_OPTS "\
+--layout=reverse \
+--height=70% \
+--border=rounded \
+--info=inline \
+--margin=1 \
+--padding=1 \
+--pointer='▶' \
+--marker='✓' \
+--prompt='❯ ' \
+--color=bg+:#33467c,bg:#1a1b26,spinner:#7dcfff,hl:#f7768e \
+--color=fg:#c0caf5,header:#f7768e,info:#bb9af7,pointer:#7dcfff \
+--color=marker:#9ece6a,fg+:#c0caf5,prompt:#bb9af7,hl+:#f7768e \
+--bind='ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down'"
 
 # mise (runtime version manager)
 if type -q mise
