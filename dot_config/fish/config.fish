@@ -18,6 +18,11 @@ alias find='fd'
 set -x XDG_CONFIG_HOME ~/.config
 set -x EDITOR nvim
 
+# WSL: open links in the Windows default browser (wslview, from the wslu package)
+if test -n "$WSL_DISTRO_NAME"
+    set -x BROWSER wslview
+end
+
 # FZF configuration (tokyonight)
 set -gx FZF_DEFAULT_OPTS "\
 --layout=reverse \
