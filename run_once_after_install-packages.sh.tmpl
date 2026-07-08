@@ -52,19 +52,18 @@ echo "Please install packages manually: fish, mise, curl, git, zip"
 
 {{- if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
 
-# WSL: clipboard (win32yank) and browser (wslu) integration with Windows
-echo "Detected WSL - installing wslu and win32yank"
+# WSL: win32yank.exe is a native Windows binary (not managed by mise) that
+# lets Neovim read/write the Windows clipboard from inside WSL. Browser
+# opening uses explorer.exe, which needs no extra package since WSL puts
+# Windows binaries on PATH automatically.
+echo "Detected WSL - installing win32yank"
 
 {{-   if or (eq .osid "linux-ubuntu") (eq .osid "linux-debian") }}
-sudo apt -y install wslu unzip
+sudo apt -y install unzip
 {{-   else if eq .osid "linux-fedora" }}
-sudo dnf install -y wslu unzip
-{{-   else }}
-echo "Please install 'wslu' manually so \$BROWSER can open links in Windows"
+sudo dnf install -y unzip
 {{-   end }}
 
-# win32yank.exe is a native Windows binary (not managed by mise) that lets
-# Neovim read/write the Windows clipboard from inside WSL.
 mkdir -p ~/.local/bin
 curl -fsSLo /tmp/win32yank.zip https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip
 unzip -o -p /tmp/win32yank.zip win32yank.exe > ~/.local/bin/win32yank.exe

@@ -18,9 +18,10 @@ alias find='fd'
 set -x XDG_CONFIG_HOME ~/.config
 set -x EDITOR nvim
 
-# WSL: open links in the Windows default browser (wslview, from the wslu package)
+# WSL: open links in the Windows default browser via explorer.exe (no extra
+# package needed - WSL puts Windows binaries on PATH automatically)
 if test -n "$WSL_DISTRO_NAME"
-    set -x BROWSER wslview
+    set -x BROWSER explorer.exe
 end
 
 # FZF configuration (tokyonight)
