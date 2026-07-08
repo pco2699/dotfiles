@@ -15,9 +15,10 @@ focus_pane_down = "prefix+j"
 focus_pane_up = "prefix+k"
 focus_pane_right = "prefix+l"
 
-# cycle tabs like tmux windows (prefix+ctrl+h/l), plus herdr defaults
-previous_tab = ["prefix+p", "prefix+ctrl+h"]
-next_tab = ["prefix+n", "prefix+ctrl+l"]
+# cycle tabs like tmux windows (prefix+ctrl+h/l), plus herdr defaults,
+# plus direct ctrl+,/ctrl+. (no prefix) like browser/editor tab switching
+previous_tab = ["prefix+p", "prefix+ctrl+h", "ctrl+comma"]
+next_tab = ["prefix+n", "prefix+ctrl+l", "ctrl+period"]
 
 # vi-style copy mode (same key as tmux)
 copy_mode = "prefix+["
