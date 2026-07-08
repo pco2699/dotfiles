@@ -16,6 +16,10 @@ env:
   # The distro system packages and the fast mise CLI-tool installs still run
   # in full, so the verify step below can check every CLI tool.
   CODESPACES: "true"
+  # mise resolves tool versions via the GitHub API (aqua/vfox/ubi backends).
+  # Without a token it uses the 60/hr unauthenticated limit and fails in CI;
+  # the built-in Actions token raises this to 5000/hr.
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   ubuntu:
