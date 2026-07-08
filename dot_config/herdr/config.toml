@@ -32,6 +32,9 @@ name = "tokyo-night"
 # mouse support (tmux: mouse on)
 mouse_capture = true
 
+# create new tabs immediately instead of prompting for a name (tmux-style)
+prompt_new_tab_name = false
+
 [session]
 # restore agent panes when the server restarts (replaces tmux-resurrect/continuum)
 resume_agents_on_restore = true
