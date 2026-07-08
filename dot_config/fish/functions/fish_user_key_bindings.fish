@@ -1,5 +1,5 @@
 function fish_user_key_bindings
-    bind \cr peco_select_history # Bind for peco select history to Ctrl+R
-    bind \cf peco_select_ghq
-    bind \c] peco_select_cd # Bind for prco change directory to Ctrl+]
+    bind \cr fzf_select_history # fzf history search on Ctrl+R
+    bind \cf fzf_select_ghq # fzf ghq repository jump on Ctrl+F
+    bind \c] fzf_select_cd # fzf change directory on Ctrl+]
 end

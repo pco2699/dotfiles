@@ -13,7 +13,6 @@ brew install mise
 brew install herdr
 brew install go
 brew install ghq
-brew install peco
 brew install gh fd ripgrep zoxide bat fzf
 # TODO: add powerline
 
@@ -28,7 +27,7 @@ fi
 sudo apt-add-repository -y ppa:fish-shell/release-3
 sudo apt update
 sudo apt -y install gpg
-sudo apt -y install fish peco gh zip fd-find ripgrep zoxide bat fzf eza
+sudo apt -y install fish gh zip fd-find ripgrep zoxide bat fzf eza
 
 # fd-find installs the binary as fdfind on Debian/Ubuntu
 mkdir -p ~/.local/bin
@@ -64,7 +63,7 @@ if [ ! -f /etc/apt/sources.list.d/github-cli.list ]; then
 fi
 sudo apt update
 sudo apt -y install gpg
-sudo apt -y install fish peco gh zip fd-find ripgrep zoxide bat fzf eza
+sudo apt -y install fish gh zip fd-find ripgrep zoxide bat fzf eza
 
 # fd-find installs the binary as fdfind on Debian/Ubuntu
 mkdir -p ~/.local/bin
@@ -98,18 +97,6 @@ if [ ! -f /etc/yum.repos.d/gh-cli.repo ]; then
 fi
 sudo dnf install -y fish gh zip neovim fzf fd-find ripgrep zoxide bat
 
-# peco (not available in Fedora repos, install from GitHub releases)
-if [ ! -f ~/.local/bin/peco ]; then
-    # resolve the latest version from the release redirect (avoids GitHub API rate limits)
-    PECO_VERSION=$(curl -fsSLo /dev/null -w '%{url_effective}' https://github.com/peco/peco/releases/latest | sed -E 's|.*/v||')
-    curl -fLO "https://github.com/peco/peco/releases/download/v${PECO_VERSION}/peco_${PECO_VERSION}_linux_amd64.tar.gz"
-    mkdir -p ~/.local/bin peco_extract
-    tar xzf "peco_${PECO_VERSION}_linux_amd64.tar.gz" -C peco_extract
-    # the binary's location inside the archive has changed between releases
-    find peco_extract -type f -name peco -exec mv {} ~/.local/bin/ \;
-    rm -rf peco_extract "peco_${PECO_VERSION}_linux_amd64.tar.gz"
-fi
-
 # required by mise
 sudo dnf install -y curl git
 
@@ -120,7 +107,7 @@ sudo dnf install -y gcc make zlib-devel bzip2 bzip2-devel readline-devel \
 {{- else }}
 # Generic Linux - install what we can
 echo "Unsupported OS: {{ .osid }}"
-echo "Please install packages manually: fish, neovim, gh, peco, zip"
+echo "Please install packages manually: fish, neovim, gh, fzf, zip"
 {{- end }}
 
 # install mise (runtime version manager, replaces asdf)
