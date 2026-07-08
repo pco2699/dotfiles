@@ -1,0 +1,27 @@
+# Managed by chezmoi. Declarative list of everything mise installs.
+# `mise install` (run from the install script) reads this file.
+
+[tools]
+# CLI tools -- installed everywhere, including CI/Codespaces (fast, precompiled
+# binary downloads).
+ghq = "latest"
+neovim = "latest"
+gh = "latest"
+ripgrep = "latest"
+fd = "latest"
+bat = "latest"
+fzf = "latest"
+zoxide = "latest"
+eza = "latest"
+herdr = "latest"
+
+{{- if ne (env "CODESPACES") "true" }}
+
+# Language runtimes -- skipped on Codespaces/CI because compiling Python (and
+# friends) from source is too slow there.
+node = "latest"
+python = "latest"
+go = "latest"
+rust = "latest"
+zig = "latest"
+{{- end }}
