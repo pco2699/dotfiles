@@ -13,8 +13,13 @@ concurrency:
 env:
   # Take the same fast path as Codespaces: skip fisher and the mise
   # language-runtime installs (compiling Python/Node/Go in CI is too slow).
-  # All the distro-specific package installation still runs in full.
+  # The distro system packages and the fast mise CLI-tool installs still run
+  # in full, so the verify step below can check every CLI tool.
   CODESPACES: "true"
+  # mise resolves tool versions via the GitHub API (aqua/vfox/ubi backends).
+  # Without a token it uses the 60/hr unauthenticated limit and fails in CI;
+  # the built-in Actions token raises this to 5000/hr.
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   ubuntu:
@@ -35,7 +40,7 @@ jobs:
       - name: Verify installation
         run: |
           export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
-          for cmd in fish nvim gh fd rg zoxide batcat fzf eza mise herdr claude; do
+          for cmd in fish nvim gh fd rg zoxide bat fzf eza mise herdr claude; do
             command -v "$cmd" || { echo "::error::$cmd not found"; exit 1; }
           done
           test -f ~/.config/fish/config.fish
@@ -54,13 +59,13 @@ jobs:
           - name: Debian 13
             image: debian:13
             bootstrap: apt-get update && apt-get install -y sudo curl git ca-certificates
-            # bat installs as batcat on Debian; eza comes from apt
-            commands: fish nvim gh fd rg zoxide batcat fzf eza mise herdr claude
+            # all CLI tools now come from mise under their canonical names
+            commands: fish nvim gh fd rg zoxide bat fzf eza mise herdr claude
           - name: Fedora (latest)
             image: fedora:latest
             bootstrap: dnf install -y sudo curl git tar gzip
-            # bat installs as bat on Fedora; eza is installed via mise (skipped in CI)
-            commands: fish nvim gh fd rg zoxide bat fzf mise herdr claude
+            # all CLI tools now come from mise under their canonical names
+            commands: fish nvim gh fd rg zoxide bat fzf eza mise herdr claude
     steps:
       # A bare container image needs the tools chezmoi's install script
       # takes for granted (a fresh interactive machine would have these).
@@ -104,8 +109,10 @@ jobs:
 
       - name: Verify installation
         run: |
-          export PATH="$HOME/.local/bin:$PATH"
-          for cmd in fish nvim gh fd rg zoxide bat fzf ghq go mise herdr claude; do
+          # go and the other language runtimes are skipped in CI (CODESPACES),
+          # so only the always-installed CLI tools are verified here.
+          export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
+          for cmd in fish nvim gh fd rg zoxide bat fzf ghq mise herdr claude; do
             command -v "$cmd" || { echo "::error::$cmd not found"; exit 1; }
           done
           test -f ~/.config/fish/config.fish

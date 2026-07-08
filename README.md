@@ -30,9 +30,8 @@ Then in WSL, follow the Quick Install steps above.
 - **Fish shell** with plugins managed by fisher
 - **Neovim** with LazyVim configuration
 - **Herdr** (terminal multiplexer) with tmux-style keybindings
-- **mise** for managing runtime versions (Node.js, Python, Go, Zig)
-- **Development tools**: gh, ghq, fzf
-- **Claude Code** CLI
+- **mise** for managing runtimes (Node.js, Python, Go, Rust, Zig) and CLI tools (neovim, gh, ghq, ripgrep, fd, bat, fzf, zoxide, eza, herdr)
+- **Claude Code** CLI (with `claude`/`cl` fish wrappers that run in auto permission mode)
 - **Clipboard**: OSC 52 everywhere (no external clipboard tools needed)
 
 ## Usage
@@ -60,7 +59,7 @@ chezmoi add ~/.bashrc
 
 Edit files in `~/.local/share/chezmoi/` or use `chezmoi edit <file>` to modify your dotfiles.
 
-The installation script (`run_once_install-packages.sh.tmpl`) automatically detects your OS and installs the appropriate packages.
+The installation script (`run_once_after_install-packages.sh.tmpl`) detects your OS, installs fish + mise, then runs `mise install` to install every tool declared in `dot_config/mise/config.toml.tmpl`.
 
 ## License
 

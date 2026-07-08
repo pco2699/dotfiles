@@ -1,0 +1,76 @@
+#!/bin/bash
+
+set -e
+
+echo "Installing packages for {{ .chezmoi.os }} ({{ .osid }})..."
+
+# System package managers install only the login shell (fish) and mise's
+# prerequisites. Every CLI tool and language runtime is declared in
+# ~/.config/mise/config.toml and installed by `mise install` below, so the
+# tool set stays consistent across machines and operating systems.
+
+{{- if eq .chezmoi.os "darwin" }}
+# macOS (Homebrew)
+brew update
+brew install fish
+brew install mise
+
+{{- else if eq .osid "linux-ubuntu" }}
+# Ubuntu
+sudo apt-add-repository -y ppa:fish-shell/release-3
+sudo apt update
+sudo apt -y install fish curl git zip
+
+# required by mise when it compiles python from source
+sudo apt -y install build-essential libssl-dev zlib1g-dev \
+    libbz2-dev libreadline-dev libsqlite3-dev \
+    libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+
+{{- else if eq .osid "linux-debian" }}
+# Debian
+sudo apt update
+sudo apt -y install fish curl git zip
+
+# required by mise when it compiles python from source
+sudo apt -y install build-essential libssl-dev zlib1g-dev \
+    libbz2-dev libreadline-dev libsqlite3-dev \
+    libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+
+{{- else if eq .osid "linux-fedora" }}
+# Fedora
+sudo dnf install -y fish curl git zip
+
+# required by mise when it compiles python from source
+sudo dnf install -y gcc make zlib-devel bzip2 bzip2-devel readline-devel \
+    sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel
+
+{{- else }}
+# Generic Linux - install what we can
+echo "Unsupported OS: {{ .osid }}"
+echo "Please install packages manually: fish, mise, curl, git, zip"
+{{- end }}
+
+# install mise (runtime & tool version manager, replaces asdf) - installed via brew on macOS
+{{- if ne .chezmoi.os "darwin" }}
+if ! command -v mise >/dev/null 2>&1 && [ ! -f ~/.local/bin/mise ]; then
+    curl -fsSL https://mise.run | sh
+fi
+{{- end }}
+export PATH="$HOME/.local/bin:$PATH"
+
+# ghq setup
+mkdir -p ~/.ghq
+git config --global ghq.root "~/.ghq"
+
+# install every tool declared in ~/.config/mise/config.toml (incl. Claude Code)
+mise install
+
+# fisher (fish plugin manager). Skipped on Codespaces/CI.
+if [ "$CODESPACES" != true ]; then
+    fish -c "curl -sL https://git.io/fisher | source; fisher update" || true
+fi
+
+echo "================================================"
+echo "Installation complete!"
+echo "Run 'chsh -s /usr/bin/fish' to set fish as your default shell"
+echo "================================================"
