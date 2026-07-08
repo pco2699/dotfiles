@@ -35,7 +35,7 @@ jobs:
       - name: Verify installation
         run: |
           export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
-          for cmd in fish nvim gh fd rg zoxide batcat fzf eza mise herdr; do
+          for cmd in fish nvim gh fd rg zoxide batcat fzf eza mise herdr claude; do
             command -v "$cmd" || { echo "::error::$cmd not found"; exit 1; }
           done
           test -f ~/.config/fish/config.fish
@@ -55,12 +55,12 @@ jobs:
             image: debian:13
             bootstrap: apt-get update && apt-get install -y sudo curl git ca-certificates
             # bat installs as batcat on Debian; eza comes from apt
-            commands: fish nvim gh fd rg zoxide batcat fzf eza mise herdr
+            commands: fish nvim gh fd rg zoxide batcat fzf eza mise herdr claude
           - name: Fedora (latest)
             image: fedora:latest
             bootstrap: dnf install -y sudo curl git tar gzip
             # bat installs as bat on Fedora; eza is installed via mise (skipped in CI)
-            commands: fish nvim gh fd rg zoxide bat fzf mise herdr
+            commands: fish nvim gh fd rg zoxide bat fzf mise herdr claude
     steps:
       # A bare container image needs the tools chezmoi's install script
       # takes for granted (a fresh interactive machine would have these).
@@ -104,7 +104,8 @@ jobs:
 
       - name: Verify installation
         run: |
-          for cmd in fish nvim gh fd rg zoxide bat fzf ghq go mise herdr; do
+          export PATH="$HOME/.local/bin:$PATH"
+          for cmd in fish nvim gh fd rg zoxide bat fzf ghq go mise herdr claude; do
             command -v "$cmd" || { echo "::error::$cmd not found"; exit 1; }
           done
           test -f ~/.config/fish/config.fish
