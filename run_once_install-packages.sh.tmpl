@@ -29,10 +29,14 @@ sudo apt update
 sudo apt -y install gpg
 sudo apt -y install fish gh zip fd-find ripgrep zoxide bat fzf eza
 
-# fd-find installs the binary as fdfind on Debian/Ubuntu
+# fd/bat install as fdfind/batcat on Debian/Ubuntu due to name conflicts;
+# symlink to the expected names so aliases relying on `fd`/`bat` work
 mkdir -p ~/.local/bin
-if [ ! -e ~/.local/bin/fd ]; then
-    ln -s "$(command -v fdfind)" ~/.local/bin/fd
+if [ ! -e ~/.local/bin/fd ] && command -v fdfind >/dev/null 2>&1; then
+    ln -sf "$(command -v fdfind)" ~/.local/bin/fd
+fi
+if [ ! -e ~/.local/bin/bat ] && command -v batcat >/dev/null 2>&1; then
+    ln -sf "$(command -v batcat)" ~/.local/bin/bat
 fi
 
 # required by mise
@@ -65,10 +69,14 @@ sudo apt update
 sudo apt -y install gpg
 sudo apt -y install fish gh zip fd-find ripgrep zoxide bat fzf eza
 
-# fd-find installs the binary as fdfind on Debian/Ubuntu
+# fd/bat install as fdfind/batcat on Debian/Ubuntu due to name conflicts;
+# symlink to the expected names so aliases relying on `fd`/`bat` work
 mkdir -p ~/.local/bin
-if [ ! -e ~/.local/bin/fd ]; then
-    ln -s "$(command -v fdfind)" ~/.local/bin/fd
+if [ ! -e ~/.local/bin/fd ] && command -v fdfind >/dev/null 2>&1; then
+    ln -sf "$(command -v fdfind)" ~/.local/bin/fd
+fi
+if [ ! -e ~/.local/bin/bat ] && command -v batcat >/dev/null 2>&1; then
+    ln -sf "$(command -v batcat)" ~/.local/bin/bat
 fi
 
 # required by mise
