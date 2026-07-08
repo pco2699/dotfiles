@@ -18,22 +18,25 @@ alias find='fd'
 set -x XDG_CONFIG_HOME ~/.config
 set -x EDITOR nvim
 
-set -g theme_color_scheme solarized
-set -g theme_nerd_fonts yes
+# FZF configuration (tokyonight)
+set -gx FZF_DEFAULT_OPTS "\
+--layout=reverse \
+--height=70% \
+--border=rounded \
+--info=inline \
+--margin=1 \
+--padding=1 \
+--pointer='▶' \
+--marker='✓' \
+--prompt='❯ ' \
+--color=bg+:#33467c,bg:#1a1b26,spinner:#7dcfff,hl:#f7768e \
+--color=fg:#c0caf5,header:#f7768e,info:#bb9af7,pointer:#7dcfff \
+--color=marker:#9ece6a,fg+:#c0caf5,prompt:#bb9af7,hl+:#f7768e \
+--bind='ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down'"
 
-# asdf configuration
-# ASDF configuration code
-if test -z $ASDF_DATA_DIR
-    set _asdf_shims "$HOME/.asdf/shims"
-else
-    set _asdf_shims "$ASDF_DATA_DIR/shims"
+# mise (runtime version manager)
+if type -q mise
+    mise activate fish | source
 end
-
-# Do not use fish_add_path (added in Fish 3.2) because it
-# potentially changes the order of items in PATH
-if not contains $_asdf_shims $PATH
-    set -gx --prepend PATH $_asdf_shims
-end
-set --erase _asdf_shims
 
 zoxide init fish --cmd cd | source
