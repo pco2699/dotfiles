@@ -12,7 +12,11 @@ fd = "latest"
 bat = "latest"
 fzf = "latest"
 zoxide = "latest"
+{{- if ne .chezmoi.os "darwin" }}
+# eza publishes no macOS binaries (Linux/Windows only), so every mise backend
+# fails on darwin; it comes from Homebrew there instead (see install script).
 eza = "latest"
+{{- end }}
 herdr = "latest"
 claude = "latest"
 
