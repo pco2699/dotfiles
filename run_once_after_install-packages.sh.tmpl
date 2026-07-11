@@ -19,7 +19,7 @@ brew install eza
 
 {{- else if eq .osid "linux-ubuntu" }}
 # Ubuntu
-sudo apt-add-repository -y ppa:fish-shell/release-3
+sudo apt-add-repository -y ppa:fish-shell/release-4
 sudo apt update
 sudo apt -y install fish curl git zip
 
@@ -81,16 +81,16 @@ fi
 {{- end }}
 export PATH="$HOME/.local/bin:$PATH"
 
-# ghq setup
+# ghq setup (ghq.root itself is set declaratively in ~/.config/git/config)
 mkdir -p ~/.ghq
-git config --global ghq.root "~/.ghq"
 
 # install every tool declared in ~/.config/mise/config.toml (incl. Claude Code)
 mise install
 
 # fisher (fish plugin manager). Skipped on Codespaces/CI.
+# (git.io is deprecated by GitHub, so use the official raw URL directly.)
 if [ "$CODESPACES" != true ]; then
-    fish -c "curl -sL https://git.io/fisher | source; fisher update" || true
+    fish -c "curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source; fisher update" || true
 fi
 
 echo "================================================"

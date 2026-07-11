@@ -1,0 +1,22 @@
+[user]
+	name = pco2699
+	email = aenkun@gmail.com
+[ghq]
+	root = ~/.ghq
+[url "git@github.com:"]
+	pushInsteadOf = https://github.com/
+[init]
+	defaultBranch = main
+[push]
+	autoSetupRemote = true
+[fetch]
+	prune = true
+[diff]
+	algorithm = histogram
+	colorMoved = plain
+[branch]
+	sort = -committerdate
+[rerere]
+	enabled = true
+[column]
+	ui = auto
