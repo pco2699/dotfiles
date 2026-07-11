@@ -46,3 +46,6 @@ if type -q mise
 end
 
 zoxide init fish --cmd cd | source
+
+# Disable fzf.fish's ctrl-v binding (variables search) — frees ctrl-v for normal paste
+fzf_configure_bindings --variables=''
