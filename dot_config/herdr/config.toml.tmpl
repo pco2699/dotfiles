@@ -24,7 +24,7 @@ focus_pane_right = "prefix+l"
 # prefix trick to prefix. Windows Terminal (WSL) lacks that protocol and
 # also hard-binds ctrl+, to Open Settings, so WSL uses ctrl+alt+left/right
 # instead, which has robust escape-sequence support everywhere.
-{{- if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
+{{- if and (eq .chezmoi.os "linux") (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
 previous_tab = ["prefix+p", "prefix+ctrl+h", "ctrl+alt+left"]
 next_tab = ["prefix+n", "prefix+ctrl+l", "ctrl+alt+right"]
 {{- else }}

@@ -50,7 +50,7 @@ echo "Unsupported OS: {{ .osid }}"
 echo "Please install packages manually: fish, mise, curl, git, zip"
 {{- end }}
 
-{{- if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
+{{- if and (eq .chezmoi.os "linux") (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
 
 # WSL: win32yank.exe is a native Windows binary (not managed by mise) that
 # lets Neovim read/write the Windows clipboard from inside WSL. Browser
