@@ -8,6 +8,18 @@ if type -q mise
     mise activate fish | source
 end
 
+# WSL: drop the Windows Node install from PATH. Unlike the other Windows tools
+# WSL inherits (gh, tailscale, ...) which are .exe-only and so never match a
+# bare command name, the Node installer also ships extensionless `npm`, `npx`
+# and `corepack` scripts. Those are valid PATH hits from Linux, so whenever a
+# repo pins a mise node/npm version that isn't installed yet, mise drops its
+# own bin dir and `npx` silently becomes the Windows one. Kept out of the
+# is-interactive block below so scripts resolve the same npx, and after
+# `mise activate` so nothing re-adds the entry afterwards.
+if test -n "$WSL_DISTRO_NAME"
+    set -gx PATH (string match -v -r '^/mnt/c/Program Files/nodejs/?$' -- $PATH)
+end
+
 if status is-interactive
     # abbreviations expand inline, so full commands land in history
     abbr -a g git
