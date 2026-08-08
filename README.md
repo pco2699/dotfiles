@@ -10,6 +10,7 @@ Managed with [chezmoi](https://chezmoi.io) for easy dotfiles management across m
 - Ubuntu/Debian (apt)
 - Fedora (dnf)
 - WSL2
+- Windows (applications via winget; no dotfiles)
 
 ## Quick Install
 
@@ -18,12 +19,27 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- -b ~/.local/bin init --apply pco2699
 ```
 
 ### For Windows + WSL
+
+Windows and WSL are two separate chezmoi installations sharing this one
+repository. Run both.
+
 In Windows:
+
 ```powershell
-wsl --install
+winget install -e --id twpayne.chezmoi
+chezmoi init --apply pco2699
 ```
 
-Then in WSL, follow the Quick Install steps above.
+That installs the applications listed in `.chezmoidata/packages.yaml` and sets up
+WSL with Debian, and does nothing else — no dotfiles are written to the Windows
+home directory. Expect UAC prompts: one for WSL, and one for each package that
+installs machine-wide (Git, PowerToys).
+
+Then reboot, run `wsl -d Debian` to create your Unix user, and follow the Quick
+Install steps above inside WSL to get the shell environment.
+
+To change the Windows application set, edit `.chezmoidata/packages.yaml` and run
+`chezmoi apply` — the installer re-runs whenever that list changes.
 
 ## What's Included
 
@@ -59,7 +75,9 @@ chezmoi add ~/.bashrc
 
 Edit files in `~/.local/share/chezmoi/` or use `chezmoi edit <file>` to modify your dotfiles.
 
-The installation script (`run_once_after_install-packages.sh.tmpl`) detects your OS, installs fish + mise, then runs `mise install` to install every tool declared in `dot_config/mise/config.toml.tmpl`.
+`.chezmoiscripts/run_once_after_install-packages.sh.tmpl` detects your OS, installs fish + mise, then runs `mise install` to install every tool declared in `dot_config/mise/config.toml.tmpl`.
+
+`.chezmoiscripts/run_onchange_after_install-packages.ps1.tmpl` does the Windows equivalent with winget, driven by `.chezmoidata/packages.yaml`. Each script is wrapped in an OS guard and renders empty on the other platform, which chezmoi treats as "do not run".
 
 ## License
 

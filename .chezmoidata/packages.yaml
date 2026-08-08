@@ -1,0 +1,24 @@
+# Windows applications, installed with winget by
+# .chezmoiscripts/run_onchange_after_install-packages.ps1.tmpl.
+#
+# The script embeds a hash of this list, so adding or removing an entry here is
+# enough to make `chezmoi apply` re-run the installer on every Windows machine.
+# IDs are exact winget identifiers from the community `winget` source; look one
+# up with `winget search <name>`.
+packages:
+  winget:
+    - Microsoft.VisualStudioCode
+    - Microsoft.WindowsTerminal
+    - Microsoft.PowerToys
+    - Git.Git
+    - OpenJS.NodeJS.LTS
+    - Python.Python.3.14
+    - Brave.Brave
+    - Raycast.Raycast
+    - Obsidian.Obsidian
+    - Discord.Discord
+    - Google.Drive
+    - tailscale.tailscale
+    - Foxit.FoxitReader
+    - Amazon.Kindle
+    - RandyRants.SharpKeys

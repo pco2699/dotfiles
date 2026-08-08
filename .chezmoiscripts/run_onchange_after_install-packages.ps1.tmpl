@@ -1,0 +1,74 @@
+{{- if eq .chezmoi.os "windows" -}}
+# Installs the applications declared in .chezmoidata/packages.yaml.
+#
+# Windows is the odd platform out here: it needs none of the Unix dotfiles this
+# repository ships (fish, mise, nvim - WSL keeps its own copy of those), so the
+# entire Windows side of chezmoi is this one list of winget packages.
+#
+# The hash below changes whenever the package list does, which is what makes
+# run_onchange_ re-run the script. Do not remove it.
+# packages.winget: {{ .packages.winget | toJson | sha256sum }}
+
+if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
+    Write-Error "winget not found. Install 'App Installer' from the Microsoft Store, then re-run 'chezmoi apply'."
+    exit 1
+}
+
+$packages = @(
+{{- range .packages.winget }}
+    "{{ . }}"
+{{- end }}
+)
+
+$failed = @()
+
+foreach ($id in $packages) {
+    Write-Host "==> $id"
+    winget install --exact --id $id --source winget `
+        --accept-package-agreements --accept-source-agreements --disable-interactivity
+
+    # winget reports "nothing to do" with a non-zero exit code, so an already
+    # installed package would otherwise look like a failure on every re-run.
+    switch ($LASTEXITCODE) {
+        0 { }
+        -1978335189 { Write-Host "    already up to date" }  # 0x8A15002B no applicable upgrade
+        -1978335135 { Write-Host "    already installed" }   # 0x8A150061 package already installed
+        default { $failed += "$id (exit $LASTEXITCODE)" }
+    }
+}
+
+if ($failed.Count -gt 0) {
+    Write-Error "winget failed for: $($failed -join ', ')"
+    exit 1
+}
+
+# WSL holds the other half of these dotfiles (fish, mise, nvim), so a Windows
+# machine is only half set up without it. Installing it turns on Windows
+# features and needs administrator rights, hence the separate elevated process.
+# WSL_UTF8 stops wsl.exe from emitting UTF-16, which PowerShell reads as
+# NUL-padded garbage that no comparison would match.
+$env:WSL_UTF8 = "1"
+$distributions = @(wsl --list --quiet 2>$null | Where-Object { $_.Trim() })
+
+if ($LASTEXITCODE -eq 0 -and $distributions.Count -gt 0) {
+    Write-Host "==> WSL already installed ($($distributions -join ', '))"
+} else {
+    Write-Host "==> WSL + Debian (accept the administrator prompt)"
+    # Debian rather than the wsl.exe default of Ubuntu. --no-launch keeps the
+    # distribution's first-run user setup out of this script; it needs a reboot
+    # before it can run anyway.
+    $wsl = Start-Process -FilePath "wsl.exe" `
+        -ArgumentList "--install", "--distribution", "Debian", "--no-launch" `
+        -Verb RunAs -Wait -PassThru
+    if ($wsl.ExitCode -ne 0) {
+        Write-Error "wsl --install failed (exit $($wsl.ExitCode))"
+        exit 1
+    }
+    Write-Host "    Installed. Reboot, run 'wsl -d Debian' to create your Unix"
+    Write-Host "    user, then follow the README's Quick Install steps inside it."
+}
+
+Write-Host "================================================"
+Write-Host "Windows setup complete ($($packages.Count) packages checked)"
+Write-Host "================================================"
+{{- end -}}
