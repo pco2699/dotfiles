@@ -32,9 +32,18 @@ focus_pane_right = "prefix+l"
 previous_tab = ["prefix+p", "prefix+ctrl+h", "ctrl+alt+left"]
 next_tab = ["prefix+n", "prefix+ctrl+l", "ctrl+alt+right"]
 {{- else }}
-previous_tab = ["prefix+p", "prefix+ctrl+h", "ctrl+comma"]
-next_tab = ["prefix+n", "prefix+ctrl+l", "ctrl+period"]
+previous_tab = ["prefix+ctrl+h", "ctrl+comma"]
+next_tab = ["prefix+ctrl+l", "ctrl+period"]
 {{- end }}
+
+previous_workspace = "prefix+p"
+next_workspace = "prefix+n"
+
+previous_agent = "ctrl+<"
+next_agent = "ctrl+>"
+
+# tmux: bind X kill-window
+close_tab = "prefix+shift+x"
 
 # vi-style copy mode (same key as tmux)
 copy_mode = "prefix+["
@@ -55,3 +64,19 @@ prompt_new_tab_name = false
 [session]
 # restore agent panes when the server restarts (replaces tmux-resurrect/continuum)
 resume_agents_on_restore = true
+
+[ui.sidebar.agents]
+row_gap = 1
+rows = [
+  ["state_icon", "workspace", "tab"],
+  ["agent"],
+  ["state_text"],
+]
+
+[ui.sidebar.spaces]
+row_gap = 1
+rows = [
+  ["state_icon", "workspace"],
+  ["branch", "git_status"],
+]
+
