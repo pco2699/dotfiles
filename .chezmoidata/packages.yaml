@@ -13,9 +13,7 @@ packages:
     - Git.Git
     - OpenJS.NodeJS.LTS
     - Python.Python.3.14
-    # Brave Origin ships only a nightly channel; there is no Brave.BraveOrigin
-    # in winget yet, so this is the stable-enough build Brave publishes.
-    - Brave.BraveOrigin.Nightly
+    - Brave.Brave
     - Raycast.Raycast
     - Obsidian.Obsidian
     - Discord.Discord

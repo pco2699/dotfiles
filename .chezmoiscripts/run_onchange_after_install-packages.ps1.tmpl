@@ -53,17 +53,19 @@ $distributions = @(wsl --list --quiet 2>$null | Where-Object { $_.Trim() })
 if ($LASTEXITCODE -eq 0 -and $distributions.Count -gt 0) {
     Write-Host "==> WSL already installed ($($distributions -join ', '))"
 } else {
-    Write-Host "==> WSL (accept the administrator prompt)"
-    # --no-launch keeps the distribution's first-run user setup out of this
-    # script; it needs a reboot before it can run anyway.
-    $wsl = Start-Process -FilePath "wsl.exe" -ArgumentList "--install", "--no-launch" `
+    Write-Host "==> WSL + Debian (accept the administrator prompt)"
+    # Debian rather than the wsl.exe default of Ubuntu. --no-launch keeps the
+    # distribution's first-run user setup out of this script; it needs a reboot
+    # before it can run anyway.
+    $wsl = Start-Process -FilePath "wsl.exe" `
+        -ArgumentList "--install", "--distribution", "Debian", "--no-launch" `
         -Verb RunAs -Wait -PassThru
     if ($wsl.ExitCode -ne 0) {
         Write-Error "wsl --install failed (exit $($wsl.ExitCode))"
         exit 1
     }
-    Write-Host "    Installed. Reboot, run 'wsl' to create your Unix user, then"
-    Write-Host "    follow the Quick Install steps from the README inside WSL."
+    Write-Host "    Installed. Reboot, run 'wsl -d Debian' to create your Unix"
+    Write-Host "    user, then follow the README's Quick Install steps inside it."
 }
 
 Write-Host "================================================"

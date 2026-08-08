@@ -31,12 +31,12 @@ chezmoi init --apply pco2699
 ```
 
 That installs the applications listed in `.chezmoidata/packages.yaml` and sets up
-WSL, and does nothing else — no dotfiles are written to the Windows home
-directory. Expect UAC prompts: one for WSL, and one for each package that
+WSL with Debian, and does nothing else — no dotfiles are written to the Windows
+home directory. Expect UAC prompts: one for WSL, and one for each package that
 installs machine-wide (Git, PowerToys).
 
-Then reboot, run `wsl` to create your Unix user, and follow the Quick Install
-steps above inside WSL to get the shell environment.
+Then reboot, run `wsl -d Debian` to create your Unix user, and follow the Quick
+Install steps above inside WSL to get the shell environment.
 
 To change the Windows application set, edit `.chezmoidata/packages.yaml` and run
 `chezmoi apply` — the installer re-runs whenever that list changes.
