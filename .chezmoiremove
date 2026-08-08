@@ -1,1 +1,5 @@
+{{- /* On Windows ~/.gitconfig is Git for Windows' real config and this
+       repository ships no replacement for it, so leave it alone there. */ -}}
+{{- if ne .chezmoi.os "windows" }}
 .gitconfig
+{{- end }}

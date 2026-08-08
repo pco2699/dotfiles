@@ -1,5 +1,13 @@
 README.md
 LICENSE
-install.ps1
 .git
 .gitignore
+
+{{- if eq .chezmoi.os "windows" }}
+
+# Windows gets its applications from winget and nothing else. Every dotfile in
+# this repository targets the Unix side (fish, mise, nvim, git), and WSL runs
+# its own chezmoi with its own home directory for those.
+.config
+.config/**
+{{- end }}

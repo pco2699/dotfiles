@@ -1,0 +1,20 @@
+# Windows applications, installed with winget by
+# .chezmoiscripts/run_onchange_after_install-packages.ps1.tmpl.
+#
+# The script embeds a hash of this list, so adding or removing an entry here is
+# enough to make `chezmoi apply` re-run the installer on every Windows machine.
+# IDs are exact winget identifiers from the community `winget` source; look one
+# up with `winget search <name>`.
+packages:
+  winget:
+    - Microsoft.VisualStudioCode
+    - Microsoft.WindowsTerminal
+    - Microsoft.BingWallpaper
+    - Microsoft.PowerToys
+    - Git.Git
+    - Discord.Discord
+    - Google.Drive
+    - Foxit.FoxitReader
+    - Amazon.Kindle
+    - RandyRants.SharpKeys
+    - DevToys-app.DevToys

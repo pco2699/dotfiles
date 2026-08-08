@@ -118,3 +118,50 @@ jobs:
           test -f ~/.config/fish/config.fish
           test -f ~/.config/herdr/config.toml
           test -f ~/.config/nvim/init.lua
+
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install chezmoi
+        run: iex "&{$(irm 'https://get.chezmoi.io/ps1')} -b '$env:USERPROFILE\bin'"
+
+      - name: chezmoi init
+        run: |
+          $env:PATH = "$env:USERPROFILE\bin;$env:PATH"
+          chezmoi init --source="$env:GITHUB_WORKSPACE"
+
+      # winget can't run non-interactively on a GitHub runner, so the install
+      # itself isn't exercised. What is checked is everything up to that point:
+      # the target state resolves, no Unix dotfile leaks into the Windows home
+      # directory, and the generated PowerShell actually parses.
+      - name: Verify Windows target state
+        run: |
+          $env:PATH = "$env:USERPROFILE\bin;$env:PATH"
+          chezmoi apply --dry-run --verbose
+
+          $managed = chezmoi managed
+          if ($managed -match '\.config') {
+            Write-Output $managed
+            throw "Windows must not manage any dotfiles, but .config entries are in the target state"
+          }
+
+      - name: Verify the winget script renders and parses
+        run: |
+          $env:PATH = "$env:USERPROFILE\bin;$env:PATH"
+          $script = Get-Content -Raw .chezmoiscripts\run_onchange_after_install-packages.ps1.tmpl |
+            chezmoi execute-template | Out-String
+
+          if ($script -notmatch 'winget install') {
+            throw "the winget installer rendered to something unexpected:`n$script"
+          }
+
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$errors) | Out-Null
+          if ($errors) {
+            $errors | ForEach-Object { Write-Output $_.ToString() }
+            throw "the rendered winget installer is not valid PowerShell"
+          }

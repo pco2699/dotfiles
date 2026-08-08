@@ -1,0 +1,48 @@
+{{- if eq .chezmoi.os "windows" -}}
+# Installs the applications declared in .chezmoidata/packages.yaml.
+#
+# Windows is the odd platform out here: it needs none of the Unix dotfiles this
+# repository ships (fish, mise, nvim - WSL keeps its own copy of those), so the
+# entire Windows side of chezmoi is this one list of winget packages.
+#
+# The hash below changes whenever the package list does, which is what makes
+# run_onchange_ re-run the script. Do not remove it.
+# packages.winget: {{ .packages.winget | toJson | sha256sum }}
+
+if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
+    Write-Error "winget not found. Install 'App Installer' from the Microsoft Store, then re-run 'chezmoi apply'."
+    exit 1
+}
+
+$packages = @(
+{{- range .packages.winget }}
+    "{{ . }}"
+{{- end }}
+)
+
+$failed = @()
+
+foreach ($id in $packages) {
+    Write-Host "==> $id"
+    winget install --exact --id $id --source winget `
+        --accept-package-agreements --accept-source-agreements --disable-interactivity
+
+    # winget reports "nothing to do" with a non-zero exit code, so an already
+    # installed package would otherwise look like a failure on every re-run.
+    switch ($LASTEXITCODE) {
+        0 { }
+        -1978335189 { Write-Host "    already up to date" }  # 0x8A15002B no applicable upgrade
+        -1978335135 { Write-Host "    already installed" }   # 0x8A150061 package already installed
+        default { $failed += "$id (exit $LASTEXITCODE)" }
+    }
+}
+
+if ($failed.Count -gt 0) {
+    Write-Error "winget failed for: $($failed -join ', ')"
+    exit 1
+}
+
+Write-Host "================================================"
+Write-Host "Windows packages up to date ($($packages.Count) checked)"
+Write-Host "================================================"
+{{- end -}}
