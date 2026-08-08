@@ -129,8 +129,14 @@ jobs:
       - name: Install chezmoi
         run: iex "&{$(irm 'https://get.chezmoi.io/ps1')} -b '$env:USERPROFILE\bin'"
 
+      # `chezmoi init` renders .chezmoi.toml.tmpl, which writes only [data], so
+      # --source is not persisted into the generated config: every command below
+      # has to be pointed at the checkout explicitly or it reads the (empty)
+      # default source directory and never sees .chezmoidata.
       - name: chezmoi init
         run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
           $env:PATH = "$env:USERPROFILE\bin;$env:PATH"
           chezmoi init --source="$env:GITHUB_WORKSPACE"
 
@@ -140,10 +146,12 @@ jobs:
       # directory, and the generated PowerShell actually parses.
       - name: Verify Windows target state
         run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
           $env:PATH = "$env:USERPROFILE\bin;$env:PATH"
-          chezmoi apply --dry-run --verbose
+          chezmoi apply --dry-run --verbose --source="$env:GITHUB_WORKSPACE"
 
-          $managed = chezmoi managed
+          $managed = chezmoi managed --source="$env:GITHUB_WORKSPACE"
           if ($managed -match '\.config') {
             Write-Output $managed
             throw "Windows must not manage any dotfiles, but .config entries are in the target state"
@@ -151,9 +159,11 @@ jobs:
 
       - name: Verify the winget script renders and parses
         run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
           $env:PATH = "$env:USERPROFILE\bin;$env:PATH"
           $script = Get-Content -Raw .chezmoiscripts\run_onchange_after_install-packages.ps1.tmpl |
-            chezmoi execute-template | Out-String
+            chezmoi execute-template --source="$env:GITHUB_WORKSPACE" | Out-String
 
           if ($script -notmatch 'winget install') {
             throw "the winget installer rendered to something unexpected:`n$script"
