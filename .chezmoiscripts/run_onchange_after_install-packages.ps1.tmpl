@@ -42,7 +42,31 @@ if ($failed.Count -gt 0) {
     exit 1
 }
 
+# WSL holds the other half of these dotfiles (fish, mise, nvim), so a Windows
+# machine is only half set up without it. Installing it turns on Windows
+# features and needs administrator rights, hence the separate elevated process.
+# WSL_UTF8 stops wsl.exe from emitting UTF-16, which PowerShell reads as
+# NUL-padded garbage that no comparison would match.
+$env:WSL_UTF8 = "1"
+$distributions = @(wsl --list --quiet 2>$null | Where-Object { $_.Trim() })
+
+if ($LASTEXITCODE -eq 0 -and $distributions.Count -gt 0) {
+    Write-Host "==> WSL already installed ($($distributions -join ', '))"
+} else {
+    Write-Host "==> WSL (accept the administrator prompt)"
+    # --no-launch keeps the distribution's first-run user setup out of this
+    # script; it needs a reboot before it can run anyway.
+    $wsl = Start-Process -FilePath "wsl.exe" -ArgumentList "--install", "--no-launch" `
+        -Verb RunAs -Wait -PassThru
+    if ($wsl.ExitCode -ne 0) {
+        Write-Error "wsl --install failed (exit $($wsl.ExitCode))"
+        exit 1
+    }
+    Write-Host "    Installed. Reboot, run 'wsl' to create your Unix user, then"
+    Write-Host "    follow the Quick Install steps from the README inside WSL."
+}
+
 Write-Host "================================================"
-Write-Host "Windows packages up to date ($($packages.Count) checked)"
+Write-Host "Windows setup complete ($($packages.Count) packages checked)"
 Write-Host "================================================"
 {{- end -}}

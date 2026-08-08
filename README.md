@@ -23,20 +23,23 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- -b ~/.local/bin init --apply pco2699
 Windows and WSL are two separate chezmoi installations sharing this one
 repository. Run both.
 
-In Windows (installs the applications listed in `.chezmoidata/packages.yaml`,
-and nothing else — no dotfiles are written to the Windows home directory):
+In Windows:
 
 ```powershell
 winget install -e --id twpayne.chezmoi
 chezmoi init --apply pco2699
-wsl --install
 ```
 
-Then in WSL, follow the Quick Install steps above to get the shell environment.
+That installs the applications listed in `.chezmoidata/packages.yaml` and sets up
+WSL, and does nothing else — no dotfiles are written to the Windows home
+directory. Expect UAC prompts: one for WSL, and one for each package that
+installs machine-wide (Git, PowerToys).
+
+Then reboot, run `wsl` to create your Unix user, and follow the Quick Install
+steps above inside WSL to get the shell environment.
 
 To change the Windows application set, edit `.chezmoidata/packages.yaml` and run
-`chezmoi apply` — the installer re-runs whenever that list changes. Packages that
-install machine-wide (Git, PowerToys) will each raise a UAC prompt.
+`chezmoi apply` — the installer re-runs whenever that list changes.
 
 ## What's Included
 
