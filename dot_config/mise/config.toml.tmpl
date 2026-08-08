@@ -19,6 +19,8 @@ eza = "latest"
 {{- end }}
 herdr = "latest"
 claude = "latest"
+# not in mise's core registry; aqua backend resolves the GitHub release assets
+"aqua:fastfetch-cli/fastfetch" = "latest"
 
 {{- if ne (env "CODESPACES") "true" }}
 

@@ -27,7 +27,7 @@ Then in WSL, follow the Quick Install steps above.
 
 ## What's Included
 
-- **Fish shell** with plugins managed by fisher
+- **Fish shell** with plugins managed by fisher, greeting a system summary via fastfetch
 - **Neovim** with LazyVim configuration
 - **Herdr** (terminal multiplexer) with tmux-style keybindings
 - **mise** for managing runtimes (Node.js, Python, Go, Rust, Zig) and CLI tools (neovim, gh, ghq, ripgrep, fd, bat, fzf, zoxide, eza, herdr)
