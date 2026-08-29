@@ -5,3 +5,15 @@
 
 [data]
     osid = {{ $osid | quote }}
+{{- if eq .chezmoi.os "windows" }}
+
+# chezmoi writes each .ps1 script to a temporary file and runs it with
+# `powershell -NoLogo <path>`, which a stock Windows install refuses: the
+# default execution policy on Windows client editions is Restricted, so no
+# script file runs at all. Bypass it for the scripts chezmoi runs, and only
+# for those - this is an argument to that one process, not a change to the
+# machine's policy.
+[interpreters.ps1]
+    command = "powershell"
+    args = ["-NoLogo", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File"]
+{{- end }}

@@ -39,6 +39,12 @@ machine-wide (Git, PowerToys).
 Then reboot, run `wsl -d Debian` to create your Unix user, and follow the Quick
 Install steps above inside WSL to get the shell environment.
 
+If `chezmoi init` reports that a script `cannot be loaded because running
+scripts is disabled on this system`, the generated chezmoi config predates the
+`[interpreters.ps1]` settings that get around Windows' Restricted execution
+policy. Re-run `chezmoi init --apply pco2699` to regenerate it; there is no need
+to change the machine's execution policy.
+
 To change the Windows application set, edit `.chezmoidata/packages.yaml` and run
 `chezmoi apply` — the installer re-runs whenever that list changes.
 
