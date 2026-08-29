@@ -165,24 +165,31 @@ jobs:
 
           # Each script paired with something only its rendered form contains,
           # so a template that silently renders empty fails here.
-          $scripts = [ordered]@{
-            'run_onchange_after_install-packages.ps1.tmpl' = 'winget install'
-            'run_onchange_after_remap-keyboard.ps1.tmpl'   = 'Scancode Map'
+          $expected = @{
+            'run_onchange_after_configure-explorer.ps1.tmpl' = 'Explorer\\Advanced'
+            'run_onchange_after_install-packages.ps1.tmpl'   = 'winget install'
+            'run_onchange_after_remap-keyboard.ps1.tmpl'     = 'Scancode Map'
           }
 
-          foreach ($entry in $scripts.GetEnumerator()) {
-            $script = Get-Content -Raw ".chezmoiscripts\$($entry.Key)" |
+          # Discovered rather than listed, so a script added later cannot skip
+          # this check by never being added to the table above.
+          foreach ($file in Get-ChildItem .chezmoiscripts\*.ps1.tmpl) {
+            if (-not $expected.ContainsKey($file.Name)) {
+              throw "$($file.Name) has no expected marker; add one to this step"
+            }
+
+            $script = Get-Content -Raw $file.FullName |
               chezmoi execute-template --source="$env:GITHUB_WORKSPACE" | Out-String
 
-            if ($script -notmatch $entry.Value) {
-              throw "$($entry.Key) rendered to something unexpected:`n$script"
+            if ($script -notmatch $expected[$file.Name]) {
+              throw "$($file.Name) rendered to something unexpected:`n$script"
             }
 
             $errors = $null
             [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$errors) | Out-Null
             if ($errors) {
               $errors | ForEach-Object { Write-Output $_.ToString() }
-              throw "the rendered $($entry.Key) is not valid PowerShell"
+              throw "the rendered $($file.Name) is not valid PowerShell"
             }
           }
 

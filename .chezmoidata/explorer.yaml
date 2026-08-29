@@ -1,0 +1,27 @@
+# Windows Explorer settings, applied by
+# .chezmoiscripts/run_onchange_after_configure-explorer.ps1.tmpl.
+#
+# Every entry is a DWORD under
+# HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced, the key
+# behind Explorer's "Folder Options" dialog. It is per-user, so nothing here
+# needs administrator rights - but Explorer only reads the key when it starts,
+# so the script restarts the shell whenever it changes something.
+#
+# The script embeds a hash of this list, so editing an entry is enough to make
+# `chezmoi apply` re-apply it on every Windows machine.
+#
+# Other settings worth knowing, should you want them: ShowSuperHidden shows
+# protected operating system files (1/0), LaunchTo opens new windows on This PC
+# rather than Quick Access (1/2), and NavPaneShowAllFolders puts every folder
+# in the navigation pane (1/0).
+explorer:
+  advanced:
+    # Windows hides the extension of known file types, which is how a file
+    # named thing.txt.exe passes for a text file.
+    - name: Show file extensions
+      value: HideFileExt
+      data: 0
+    # 1 shows hidden files and folders, 2 hides them.
+    - name: Show hidden files and folders
+      value: Hidden
+      data: 1
