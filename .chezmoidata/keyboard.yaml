@@ -11,10 +11,15 @@
 # Removing every entry removes the map and restores the stock layout.
 #
 # `from` is the scancode of the physical key, `to` is what it should become,
-# both as hex. Extended keys (the ones the keyboard reports with an e0 prefix)
-# are written as e0xx; ordinary keys are 00xx. Look up a code with SharpKeys,
-# which prints them in exactly this form. Quote them: a code such as 0029 is
-# otherwise read as a number and loses its leading zeros.
+# both as hex, and quoted - a code such as 0029 is otherwise read as a number
+# and loses its leading zeros. Extended keys (the ones the keyboard reports
+# with an e0 prefix) are written as e0xx, ordinary keys as 00xx:
+#
+#   e05b left Windows    e05c right Windows    e05d menu
+#   001d left Ctrl       e01d right Ctrl       003a caps lock
+#   0038 left Alt        e038 right Alt        0001 escape
+#
+# A `to` of 0000 disables the key outright.
 keyboard:
   remaps:
     # A Mac-shaped habit on a Windows keyboard: the key next to the left Alt
