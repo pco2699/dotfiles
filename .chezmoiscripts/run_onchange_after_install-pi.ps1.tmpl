@@ -1,0 +1,151 @@
+{{- if eq .chezmoi.os "windows" -}}
+# Installs the pi coding agent and the harness declared in .chezmoidata/pi.yaml.
+#
+# pi is not in winget, so this goes through npm. It sorts after
+# install-packages so Node is already there on a fresh machine - but that also
+# means npm is not on this process's PATH yet, since PATH was captured before
+# winget ran. Everything below is therefore resolved by path rather than name.
+#
+# This is the one part of the Windows setup that writes a config file into the
+# Windows home directory (~/.pi/agent/settings.json). Nothing here is a chezmoi
+# target: chezmoi still manages no dotfiles on Windows.
+#
+# The hash below changes whenever any of the pi settings do, which is what
+# makes run_onchange_ re-run the script. Do not remove it.
+# pi: {{ .pi | toJson | sha256sum }}
+
+$ErrorActionPreference = 'Stop'
+
+$npmPackage = {{ .pi.npmPackage | quote }}
+
+$packages = @(
+{{- range .pi.packages }}
+    {{ . | quote }}
+{{- end }}
+)
+
+# Rendered as JSON rather than PowerShell literals so that types survive: a
+# bool stays a bool and does not become the string "True" in settings.json.
+$settingsJson = @'
+{{ .pi.settings | toJson }}
+'@
+
+function Find-Executable {
+    param([string]$Name, [string[]]$Fallbacks)
+
+    $command = Get-Command $Name -ErrorAction SilentlyContinue
+    if ($command) { return $command.Source }
+
+    foreach ($path in $Fallbacks) {
+        if ($path -and (Test-Path -LiteralPath $path)) { return $path }
+    }
+
+    return $null
+}
+
+$npm = Find-Executable -Name 'npm.cmd' -Fallbacks @(
+    (Join-Path $env:ProgramFiles 'nodejs\npm.cmd')
+    (Join-Path ${env:ProgramFiles(x86)} 'nodejs\npm.cmd')
+    (Join-Path $env:LOCALAPPDATA 'Programs\nodejs\npm.cmd')
+)
+
+if (-not $npm) {
+    Write-Error "npm not found. Node.js comes from winget in the previous script; re-run 'chezmoi apply' once it is installed."
+    exit 1
+}
+
+# npm's global bin, where the pi shim lands. Asking npm beats guessing at
+# %APPDATA%\npm, which is only the default.
+$prefix = (& $npm prefix -g 2>$null | Select-Object -First 1)
+if ($LASTEXITCODE -ne 0 -or -not $prefix) {
+    Write-Error "could not read npm's global prefix (exit $LASTEXITCODE)"
+    exit 1
+}
+
+$pi = Join-Path $prefix 'pi.cmd'
+
+if (Test-Path -LiteralPath $pi) {
+    Write-Host "==> pi already installed"
+} else {
+    Write-Host "==> $npmPackage"
+    # --ignore-scripts matches the harness's own setup.sh: nothing in the
+    # package needs a postinstall, and skipping them keeps the install honest.
+    & $npm install -g --ignore-scripts $npmPackage
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "npm install failed (exit $LASTEXITCODE)"
+        exit 1
+    }
+
+    if (-not (Test-Path -LiteralPath $pi)) {
+        Write-Error "npm reported success but $pi is missing"
+        exit 1
+    }
+}
+
+$installed = @(& $pi list 2>$null)
+
+foreach ($package in $packages) {
+    if ($installed | Select-String -SimpleMatch $package -Quiet) {
+        Write-Host "==> $package : already installed"
+        continue
+    }
+
+    Write-Host "==> $package"
+    & $pi install $package
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "pi install $package failed (exit $LASTEXITCODE)"
+        exit 1
+    }
+}
+
+# Settings are merged rather than replaced: everything pi writes here itself -
+# and anything set by hand - survives, and only the keys declared in
+# .chezmoidata/pi.yaml are forced.
+$agentDir = if ($env:PI_CODING_AGENT_DIR) { $env:PI_CODING_AGENT_DIR } else { Join-Path $HOME '.pi\agent' }
+$settingsFile = Join-Path $agentDir 'settings.json'
+
+$desired = $settingsJson | ConvertFrom-Json
+
+$current = $null
+if (Test-Path -LiteralPath $settingsFile) {
+    try {
+        $current = Get-Content -Raw -LiteralPath $settingsFile | ConvertFrom-Json
+    } catch {
+        Write-Host "    $settingsFile is not valid JSON; starting fresh"
+    }
+}
+
+# ConvertFrom-Json -AsHashtable is PowerShell 6+, and chezmoi runs these under
+# Windows PowerShell, so walk the properties instead.
+function ConvertTo-OrderedHashtable {
+    param($InputObject)
+
+    $table = [ordered]@{}
+    if ($null -ne $InputObject) {
+        foreach ($property in $InputObject.PSObject.Properties) {
+            $table[$property.Name] = $property.Value
+        }
+    }
+    return $table
+}
+
+$before = ConvertTo-OrderedHashtable $current
+$merged = ConvertTo-OrderedHashtable $current
+foreach ($property in $desired.PSObject.Properties) {
+    $merged[$property.Name] = $property.Value
+}
+
+$beforeJson = $before | ConvertTo-Json -Depth 10
+$mergedJson = $merged | ConvertTo-Json -Depth 10
+
+if ($beforeJson -eq $mergedJson) {
+    Write-Host "==> settings already applied"
+    exit 0
+}
+
+New-Item -ItemType Directory -Force -Path $agentDir | Out-Null
+Set-Content -LiteralPath $settingsFile -Value $mergedJson -Encoding UTF8
+
+Write-Host "==> settings written to $settingsFile"
+Write-Host "    run 'pi /login' once to add this machine's provider credentials"
+{{- end -}}

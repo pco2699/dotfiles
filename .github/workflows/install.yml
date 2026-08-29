@@ -165,24 +165,41 @@ jobs:
 
           # Each script paired with something only its rendered form contains,
           # so a template that silently renders empty fails here.
-          $scripts = [ordered]@{
-            'run_onchange_after_install-packages.ps1.tmpl' = 'winget install'
-            'run_onchange_after_remap-keyboard.ps1.tmpl'   = 'Scancode Map'
+          $expected = @{
+            'run_onchange_after_configure-explorer.ps1.tmpl' = 'Explorer\\Advanced'
+            'run_onchange_after_install-packages.ps1.tmpl'   = 'winget install'
+            'run_onchange_after_install-pi.ps1.tmpl'         = 'pi-coding-agent'
+            'run_onchange_after_remap-keyboard.ps1.tmpl'     = 'Scancode Map'
           }
 
-          foreach ($entry in $scripts.GetEnumerator()) {
-            $script = Get-Content -Raw ".chezmoiscripts\$($entry.Key)" |
+          # Discovered rather than listed, so a script added later cannot skip
+          # this check by never being added to the table above. The count has
+          # to match too, or a glob that quietly matches nothing would leave
+          # the loop below with nothing to do and still pass.
+          $scripts = @(Get-ChildItem .chezmoiscripts\*.ps1.tmpl)
+          if ($scripts.Count -ne $expected.Count) {
+            throw "found $($scripts.Count) Windows scripts, but $($expected.Count) are listed above"
+          }
+
+          foreach ($file in $scripts) {
+            Write-Output "checking $($file.Name)"
+
+            if (-not $expected.ContainsKey($file.Name)) {
+              throw "$($file.Name) has no expected marker; add one to this step"
+            }
+
+            $script = Get-Content -Raw $file.FullName |
               chezmoi execute-template --source="$env:GITHUB_WORKSPACE" | Out-String
 
-            if ($script -notmatch $entry.Value) {
-              throw "$($entry.Key) rendered to something unexpected:`n$script"
+            if ($script -notmatch $expected[$file.Name]) {
+              throw "$($file.Name) rendered to something unexpected:`n$script"
             }
 
             $errors = $null
             [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$errors) | Out-Null
             if ($errors) {
               $errors | ForEach-Object { Write-Output $_.ToString() }
-              throw "the rendered $($entry.Key) is not valid PowerShell"
+              throw "the rendered $($file.Name) is not valid PowerShell"
             }
           }
 
@@ -228,8 +245,8 @@ jobs:
 
       # The remap is a binary blob assembled at run time, so parsing the script
       # says nothing about the bytes it would write. Build them here the same
-      # way the script does and check them against the known-good map for
-      # left Windows -> left Ctrl, the one SharpKeys writes for that pair.
+      # way the script does and check them against the known-good map for the
+      # pairs in keyboard.yaml, the bytes SharpKeys writes for them.
       - name: Verify the keyboard remap produces the expected scancode map
         run: |
           $ErrorActionPreference = 'Stop'
@@ -247,7 +264,7 @@ jobs:
           Invoke-Expression $script.Substring(0, $index + $marker.Length)
 
           $actual = ($desired | ForEach-Object { $_.ToString('x2') }) -join ''
-          $expected = '0000000000000000020000001d005be000000000'
+          $expected = '0000000000000000030000001d005be01d003a0000000000'
           if ($actual -ne $expected) {
             throw "scancode map is $actual, expected $expected"
           }

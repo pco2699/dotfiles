@@ -1,0 +1,67 @@
+{{- if eq .chezmoi.os "windows" -}}
+# Applies the Explorer settings declared in .chezmoidata/explorer.yaml.
+#
+# These are the checkboxes in Explorer's Folder Options dialog, stored as
+# DWORDs under HKCU - per-user, so unlike the rest of the Windows setup this
+# one needs no administrator rights. Explorer reads the key when it starts, so
+# a changed value only shows after the shell restarts.
+#
+# The hash below changes whenever the settings list does, which is what makes
+# run_onchange_ re-run the script. Do not remove it.
+# explorer.advanced: {{ .explorer.advanced | toJson | sha256sum }}
+
+$ErrorActionPreference = 'Stop'
+
+$keyPath = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced'
+
+$settings = @(
+{{- range .explorer.advanced }}
+    @{ name = {{ .name | quote }}; value = {{ .value | quote }}; data = {{ .data }} }
+{{- end }}
+)
+
+# The key exists on any real profile; Test-Path first so -Force cannot clobber
+# an existing key and every other setting in it.
+if (-not (Test-Path -LiteralPath $keyPath)) {
+    New-Item -Path $keyPath -Force | Out-Null
+}
+
+$changed = @()
+
+foreach ($setting in $settings) {
+    $existing = Get-ItemProperty -LiteralPath $keyPath -Name $setting.value -ErrorAction SilentlyContinue
+    $current = if ($null -eq $existing) { $null } else { $existing.($setting.value) }
+
+    if ($current -eq $setting.data) {
+        Write-Host "==> $($setting.name): already set"
+        continue
+    }
+
+    Write-Host "==> $($setting.name): $($setting.value) = $($setting.data)"
+    New-ItemProperty -LiteralPath $keyPath -Name $setting.value -PropertyType DWord `
+        -Value $setting.data -Force | Out-Null
+    $changed += $setting.name
+}
+
+if ($changed.Count -eq 0) {
+    exit 0
+}
+
+# Explorer caches these at startup, so the shell has to come back before any of
+# it shows. Windows usually relaunches it on its own when it goes away; start it
+# by hand when it does not. Open Explorer windows are lost either way.
+$explorer = @(Get-Process -Name explorer -ErrorAction SilentlyContinue)
+
+if ($explorer.Count -eq 0) {
+    Write-Host "    Explorer is not running; these apply when it next starts"
+    exit 0
+}
+
+Write-Host "    restarting Explorer for: $($changed -join ', ')"
+$explorer | Stop-Process -Force
+Start-Sleep -Seconds 2
+
+if (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue)) {
+    Start-Process explorer.exe
+}
+{{- end -}}
