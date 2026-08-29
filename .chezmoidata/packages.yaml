@@ -26,6 +26,7 @@ packages:
     - SST.OpenCodeDesktop
     - Telegram.TelegramDesktop
     - Valve.Steam
+    - 7zip.7zip
     # Installs both the ligature and the NL (no-ligature) families.
     - DEVCOM.JetBrainsMonoNerdFont
   msstore:
