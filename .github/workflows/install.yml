@@ -228,8 +228,8 @@ jobs:
 
       # The remap is a binary blob assembled at run time, so parsing the script
       # says nothing about the bytes it would write. Build them here the same
-      # way the script does and check them against the known-good map for
-      # left Windows -> left Ctrl, the one SharpKeys writes for that pair.
+      # way the script does and check them against the known-good map for the
+      # pairs in keyboard.yaml, the bytes SharpKeys writes for them.
       - name: Verify the keyboard remap produces the expected scancode map
         run: |
           $ErrorActionPreference = 'Stop'
@@ -247,7 +247,7 @@ jobs:
           Invoke-Expression $script.Substring(0, $index + $marker.Length)
 
           $actual = ($desired | ForEach-Object { $_.ToString('x2') }) -join ''
-          $expected = '0000000000000000020000001d005be000000000'
+          $expected = '0000000000000000030000001d005be01d003a0000000000'
           if ($actual -ne $expected) {
             throw "scancode map is $actual, expected $expected"
           }

@@ -51,8 +51,9 @@ To change the Windows application set, edit `.chezmoidata/packages.yaml` and run
 ### Windows key remapping
 
 `.chezmoidata/keyboard.yaml` declares key remappings, applied on `chezmoi apply`.
-Out of the box the left Windows key becomes a second left Ctrl; the right
-Windows key still opens the Start menu.
+Out of the box the left Windows key and caps lock both become left Ctrl. The
+right Windows key still opens the Start menu, and nothing maps back to caps
+lock, so a machine set up this way has no caps lock at all.
 
 The mappings are written to the keyboard driver's `Scancode Map` — the registry
 value [SharpKeys](https://github.com/randyrants/sharpkeys) edits through its GUI
@@ -74,7 +75,7 @@ whole machine, so applying this replaces anything SharpKeys wrote by hand.
 - **mise** for managing runtimes (Node.js, Python, Go, Rust, Zig) and CLI tools (neovim, gh, ghq, ripgrep, fd, bat, fzf, zoxide, eza, herdr)
 - **Claude Code** CLI (with `claude`/`cl` fish wrappers that run in auto permission mode)
 - **Clipboard**: native tools locally, OSC 52 over SSH, win32yank on WSL
-- **Windows key remapping** (Windows only): left Windows key acts as left Ctrl, written straight into the keyboard driver
+- **Windows key remapping** (Windows only): left Windows key and caps lock both act as left Ctrl, written straight into the keyboard driver
 
 ## Usage
 

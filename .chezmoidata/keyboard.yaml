@@ -27,3 +27,8 @@ keyboard:
     - name: Left Windows -> Left Ctrl
       from: "e05b"
       to: "001d"
+    # Caps lock is a worse key than the Ctrl it displaced. Nothing maps back
+    # to caps lock, so this machine simply has no caps lock any more.
+    - name: Caps Lock -> Left Ctrl
+      from: "003a"
+      to: "001d"
