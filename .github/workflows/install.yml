@@ -186,6 +186,46 @@ jobs:
             }
           }
 
+      # Nothing above ever executes a script, so a chezmoi that cannot run
+      # PowerShell at all still passes every check. Restricted is the default
+      # execution policy on Windows client editions and the one that blocked
+      # the real installers; process scope is inherited by the powershell
+      # chezmoi spawns, so setting it here reproduces a stock machine.
+      - name: Verify chezmoi runs PowerShell scripts under a Restricted policy
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $env:PATH = "$env:USERPROFILE\bin;$env:PATH"
+
+          # A throwaway source directory holding one trivial script, so this
+          # exercises chezmoi's script runner without running the installers.
+          $source = Join-Path $env:RUNNER_TEMP 'probe-source'
+          $dest = Join-Path $env:RUNNER_TEMP 'probe-dest'
+          $marker = Join-Path $env:RUNNER_TEMP 'probe-ran.txt'
+          New-Item -ItemType Directory -Force -Path $source, $dest | Out-Null
+          Set-Content -Path (Join-Path $source 'run_probe.ps1') `
+            -Value "Set-Content -Path '$marker' -Value ran"
+
+          Set-ExecutionPolicy -Scope Process -ExecutionPolicy Restricted -Force
+
+          # First without the interpreter settings, so a pass below cannot be
+          # the runner simply allowing scripts anyway.
+          $control = Join-Path $env:RUNNER_TEMP 'control-config.toml'
+          Set-Content -Path $control -Value ''
+          $PSNativeCommandUseErrorActionPreference = $false
+          chezmoi apply --config="$control" --source="$source" --destination="$dest"
+          $controlExit = $LASTEXITCODE
+          $PSNativeCommandUseErrorActionPreference = $true
+          if ($controlExit -eq 0 -or (Test-Path $marker)) {
+            throw "the probe ran without the interpreter settings, so this check proves nothing"
+          }
+
+          # Then with the config chezmoi init generated, which must run it.
+          chezmoi apply --source="$source" --destination="$dest"
+          if (-not (Test-Path $marker)) {
+            throw "chezmoi did not run the probe script under a Restricted execution policy"
+          }
+
       # The remap is a binary blob assembled at run time, so parsing the script
       # says nothing about the bytes it would write. Build them here the same
       # way the script does and check them against the known-good map for
