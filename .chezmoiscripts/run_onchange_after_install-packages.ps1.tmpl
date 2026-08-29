@@ -7,7 +7,7 @@
 #
 # The hash below changes whenever the package list does, which is what makes
 # run_onchange_ re-run the script. Do not remove it.
-# packages.winget: {{ .packages.winget | toJson | sha256sum }}
+# packages: {{ .packages | toJson | sha256sum }}
 
 if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
     Write-Error "winget not found. Install 'App Installer' from the Microsoft Store, then re-run 'chezmoi apply'."
@@ -16,15 +16,18 @@ if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
 
 $packages = @(
 {{- range .packages.winget }}
-    "{{ . }}"
+    @{ id = "{{ . }}"; source = "winget" }
+{{- end }}
+{{- range .packages.msstore }}
+    @{ id = "{{ . }}"; source = "msstore" }
 {{- end }}
 )
 
 $failed = @()
 
-foreach ($id in $packages) {
-    Write-Host "==> $id"
-    winget install --exact --id $id --source winget `
+foreach ($pkg in $packages) {
+    Write-Host "==> $($pkg.id) ($($pkg.source))"
+    winget install --exact --id $pkg.id --source $pkg.source `
         --accept-package-agreements --accept-source-agreements --disable-interactivity
 
     # winget reports "nothing to do" with a non-zero exit code, so an already
@@ -33,7 +36,7 @@ foreach ($id in $packages) {
         0 { }
         -1978335189 { Write-Host "    already up to date" }  # 0x8A15002B no applicable upgrade
         -1978335135 { Write-Host "    already installed" }   # 0x8A150061 package already installed
-        default { $failed += "$id (exit $LASTEXITCODE)" }
+        default { $failed += "$($pkg.id) (exit $LASTEXITCODE)" }
     }
 }
 

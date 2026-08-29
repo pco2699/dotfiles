@@ -15,16 +15,20 @@ packages:
     - Herdr.Herdr.Preview
     - Microsoft.PowerToys
     - Git.Git
+    - GitHub.cli
     - OpenJS.NodeJS.LTS
     - Python.Python.3.14
     # Lowercase publisher, as astral-sh publishes it.
     - astral-sh.uv
     - Anthropic.Claude
-    - Brave.Brave
-    - Raycast.Raycast
     - Obsidian.Obsidian
-    - Discord.Discord
-    - Google.Drive
-    - tailscale.tailscale
     - Foxit.FoxitReader
-    - Amazon.Kindle
+    - SST.OpenCodeDesktop
+    - Telegram.TelegramDesktop
+    - Valve.Steam
+  msstore:
+    # Microsoft Store product IDs, found with `winget search --source msstore
+    # <name>`. Unlike the winget source, a Store install can require signing
+    # in with a Microsoft account.
+    # Raycast
+    - 9PFXXSHC64H3
