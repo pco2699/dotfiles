@@ -26,3 +26,9 @@ packages:
     - SST.OpenCodeDesktop
     - Telegram.TelegramDesktop
     - Valve.Steam
+  msstore:
+    # Microsoft Store product IDs, found with `winget search --source msstore
+    # <name>`. Unlike the winget source, a Store install can require signing
+    # in with a Microsoft account.
+    # Raycast
+    - 9PFXXSHC64H3
