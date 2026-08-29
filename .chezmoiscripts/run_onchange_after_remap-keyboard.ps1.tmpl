@@ -1,0 +1,121 @@
+{{- if eq .chezmoi.os "windows" -}}
+# Applies the key remappings declared in .chezmoidata/keyboard.yaml.
+#
+# This writes the keyboard driver's Scancode Map, which is what SharpKeys edits
+# through its GUI. Doing it in the driver rather than in PowerToys' Keyboard
+# Manager is what makes remapping the Windows key work at all: the shell claims
+# its shortcuts before any user-space remapper sees the key.
+#
+# The hash below changes whenever the remap list does, which is what makes
+# run_onchange_ re-run the script. Do not remove it.
+# keyboard.remaps: {{ .keyboard.remaps | toJson | sha256sum }}
+
+$ErrorActionPreference = 'Stop'
+
+$keyPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\Keyboard Layout'
+$valueName = 'Scancode Map'
+
+$remaps = @(
+{{- range .keyboard.remaps }}
+    @{ name = {{ .name | quote }}; from = {{ .from | quote }}; to = {{ .to | quote }} }
+{{- end }}
+)
+
+# Scancode Map is a single binary blob: a DWORD version and a DWORD flags word
+# (both zero), a DWORD count that includes the terminator, one DWORD per
+# mapping, then a zero DWORD. In a mapping the high word is the physical key
+# and the low word is what it becomes, so little-endian bytes read <to><from>.
+function New-ScancodeMap {
+    param([object[]]$Remaps)
+
+    if ($Remaps.Count -eq 0) { return $null }
+
+    $bytes = [System.Collections.Generic.List[byte]]::new()
+    $bytes.AddRange([byte[]]@(0, 0, 0, 0, 0, 0, 0, 0))
+    $bytes.AddRange([BitConverter]::GetBytes([uint32]($Remaps.Count + 1)))
+    foreach ($remap in $Remaps) {
+        $bytes.AddRange([BitConverter]::GetBytes([Convert]::ToUInt16($remap.to, 16)))
+        $bytes.AddRange([BitConverter]::GetBytes([Convert]::ToUInt16($remap.from, 16)))
+    }
+    $bytes.AddRange([byte[]]@(0, 0, 0, 0))
+
+    return $bytes.ToArray()
+}
+
+function Format-ScancodeMap {
+    param([byte[]]$Bytes)
+
+    if ($null -eq $Bytes) { return '<unset>' }
+    return (($Bytes | ForEach-Object { $_.ToString('x2') }) -join '')
+}
+
+$desired = [byte[]](New-ScancodeMap $remaps)
+
+$current = $null
+$existing = Get-ItemProperty -LiteralPath $keyPath -Name $valueName -ErrorAction SilentlyContinue
+if ($null -ne $existing) { $current = [byte[]]$existing.$valueName }
+
+foreach ($remap in $remaps) {
+    Write-Host "==> $($remap.name) ($($remap.from) -> $($remap.to))"
+}
+if ($remaps.Count -eq 0) {
+    Write-Host "==> no remappings declared, restoring the stock keyboard layout"
+}
+
+if ((Format-ScancodeMap $current) -eq (Format-ScancodeMap $desired)) {
+    Write-Host "    already applied"
+    exit 0
+}
+
+# The map is one value for the whole machine, so anything already in it - a
+# mapping made by hand in SharpKeys, say - is about to be replaced.
+if ($null -ne $current) {
+    Write-Host "    replacing the existing map ($(Format-ScancodeMap $current))"
+}
+
+# Anything under HKLM needs administrator rights, so the write happens in its
+# own process. Passing it base64-encoded keeps the byte array intact through
+# the command line, which quoting alone would not survive.
+if ($null -eq $desired) {
+    $command = "Remove-ItemProperty -LiteralPath '$keyPath' -Name '$valueName' -ErrorAction SilentlyContinue"
+} else {
+    $literal = ($desired | ForEach-Object { '0x{0:x2}' -f $_ }) -join ','
+    $command = "New-ItemProperty -LiteralPath '$keyPath' -Name '$valueName' -PropertyType Binary -Value ([byte[]]@($literal)) -Force | Out-Null"
+}
+
+$child = "try { `$ErrorActionPreference = 'Stop'; $command; exit 0 } catch { exit 1 }"
+$encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($child))
+
+$startArgs = @{
+    FilePath     = 'powershell.exe'
+    ArgumentList = @('-NoProfile', '-NonInteractive', '-EncodedCommand', $encoded)
+    WindowStyle  = 'Hidden'
+    Wait         = $true
+    PassThru     = $true
+}
+
+$identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+$isAdmin = ([Security.Principal.WindowsPrincipal]$identity).IsInRole(
+    [Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $isAdmin) {
+    Write-Host "    writing '$valueName' (accept the administrator prompt)"
+    $startArgs.Verb = 'RunAs'
+}
+
+try {
+    $write = Start-Process @startArgs
+} catch {
+    # Declining the UAC prompt lands here rather than in an exit code.
+    Write-Error "could not elevate to write '$valueName': $($_.Exception.Message)"
+    exit 1
+}
+
+if ($write.ExitCode -ne 0) {
+    Write-Error "writing '$valueName' failed (exit $($write.ExitCode))"
+    exit 1
+}
+
+Write-Host "================================================"
+Write-Host "Keyboard remapping written. It takes effect after a reboot."
+Write-Host "================================================"
+{{- end -}}

@@ -157,21 +157,57 @@ jobs:
             throw "Windows must not manage any dotfiles, but .config entries are in the target state"
           }
 
-      - name: Verify the winget script renders and parses
+      - name: Verify the Windows scripts render and parse
         run: |
           $ErrorActionPreference = 'Stop'
           $PSNativeCommandUseErrorActionPreference = $true
           $env:PATH = "$env:USERPROFILE\bin;$env:PATH"
-          $script = Get-Content -Raw .chezmoiscripts\run_onchange_after_install-packages.ps1.tmpl |
-            chezmoi execute-template --source="$env:GITHUB_WORKSPACE" | Out-String
 
-          if ($script -notmatch 'winget install') {
-            throw "the winget installer rendered to something unexpected:`n$script"
+          # Each script paired with something only its rendered form contains,
+          # so a template that silently renders empty fails here.
+          $scripts = [ordered]@{
+            'run_onchange_after_install-packages.ps1.tmpl' = 'winget install'
+            'run_onchange_after_remap-keyboard.ps1.tmpl'   = 'Scancode Map'
           }
 
-          $errors = $null
-          [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$errors) | Out-Null
-          if ($errors) {
-            $errors | ForEach-Object { Write-Output $_.ToString() }
-            throw "the rendered winget installer is not valid PowerShell"
+          foreach ($entry in $scripts.GetEnumerator()) {
+            $script = Get-Content -Raw ".chezmoiscripts\$($entry.Key)" |
+              chezmoi execute-template --source="$env:GITHUB_WORKSPACE" | Out-String
+
+            if ($script -notmatch $entry.Value) {
+              throw "$($entry.Key) rendered to something unexpected:`n$script"
+            }
+
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$errors) | Out-Null
+            if ($errors) {
+              $errors | ForEach-Object { Write-Output $_.ToString() }
+              throw "the rendered $($entry.Key) is not valid PowerShell"
+            }
+          }
+
+      # The remap is a binary blob assembled at run time, so parsing the script
+      # says nothing about the bytes it would write. Build them here the same
+      # way the script does and check them against the known-good map for
+      # left Windows -> left Ctrl, the one SharpKeys writes for that pair.
+      - name: Verify the keyboard remap produces the expected scancode map
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $env:PATH = "$env:USERPROFILE\bin;$env:PATH"
+          $script = Get-Content -Raw .chezmoiscripts\run_onchange_after_remap-keyboard.ps1.tmpl |
+            chezmoi execute-template --source="$env:GITHUB_WORKSPACE" | Out-String
+
+          # Everything up to and including New-ScancodeMap, which is the part
+          # that reads the remap list and turns it into bytes. Running past it
+          # would touch the registry.
+          $marker = '$desired = [byte[]](New-ScancodeMap $remaps)'
+          $index = $script.IndexOf($marker)
+          if ($index -lt 0) { throw "the remap script no longer builds its map with $marker" }
+          Invoke-Expression $script.Substring(0, $index + $marker.Length)
+
+          $actual = ($desired | ForEach-Object { $_.ToString('x2') }) -join ''
+          $expected = '0000000000000000020000001d005be000000000'
+          if ($actual -ne $expected) {
+            throw "scancode map is $actual, expected $expected"
           }

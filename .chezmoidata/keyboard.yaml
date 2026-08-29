@@ -1,0 +1,24 @@
+# Windows key remappings, applied by
+# .chezmoiscripts/run_onchange_after_remap-keyboard.ps1.tmpl.
+#
+# These are written into the keyboard driver's "Scancode Map" registry value -
+# the same value SharpKeys edits - so the remapping happens below every
+# application and survives into UAC prompts and the lock screen. It is
+# machine-wide (HKLM) and only takes effect after a reboot.
+#
+# The script embeds a hash of this list, so adding or removing an entry here is
+# enough to make `chezmoi apply` re-write the map on every Windows machine.
+# Removing every entry removes the map and restores the stock layout.
+#
+# `from` is the scancode of the physical key, `to` is what it should become,
+# both as hex. Extended keys (the ones the keyboard reports with an e0 prefix)
+# are written as e0xx; ordinary keys are 00xx. Look up a code with SharpKeys,
+# which prints them in exactly this form. Quote them: a code such as 0029 is
+# otherwise read as a number and loses its leading zeros.
+keyboard:
+  remaps:
+    # A Mac-shaped habit on a Windows keyboard: the key next to the left Alt
+    # becomes another Ctrl. The right Windows key still opens the Start menu.
+    - name: Left Windows -> Left Ctrl
+      from: "e05b"
+      to: "001d"

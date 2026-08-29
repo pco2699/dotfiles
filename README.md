@@ -30,16 +30,35 @@ winget install -e --id twpayne.chezmoi
 chezmoi init --apply pco2699
 ```
 
-That installs the applications listed in `.chezmoidata/packages.yaml` and sets up
-WSL with Debian, and does nothing else — no dotfiles are written to the Windows
-home directory. Expect UAC prompts: one for WSL, and one for each package that
-installs machine-wide (Git, PowerToys).
+That installs the applications listed in `.chezmoidata/packages.yaml`, sets up
+WSL with Debian, and applies the key remappings in `.chezmoidata/keyboard.yaml`
+— no dotfiles are written to the Windows home directory. Expect UAC prompts:
+one for WSL, one for the remapping, and one for each package that installs
+machine-wide (Git, PowerToys).
 
 Then reboot, run `wsl -d Debian` to create your Unix user, and follow the Quick
 Install steps above inside WSL to get the shell environment.
 
 To change the Windows application set, edit `.chezmoidata/packages.yaml` and run
 `chezmoi apply` — the installer re-runs whenever that list changes.
+
+### Windows key remapping
+
+`.chezmoidata/keyboard.yaml` declares key remappings, applied on `chezmoi apply`.
+Out of the box the left Windows key becomes a second left Ctrl; the right
+Windows key still opens the Start menu.
+
+The mappings are written to the keyboard driver's `Scancode Map` — the registry
+value [SharpKeys](https://github.com/randyrants/sharpkeys) edits through its GUI
+— rather than to PowerToys' Keyboard Manager. That is what makes remapping the
+Windows key work at all, since the shell claims its shortcuts before any
+user-space remapper sees the key. It also means the change is machine-wide, is
+in effect at the lock screen and in UAC prompts, and **only takes effect after a
+reboot**.
+
+Edit the list and run `chezmoi apply` to change it; empty the list to remove the
+map and get the stock layout back. `Scancode Map` is a single value for the
+whole machine, so applying this replaces anything SharpKeys wrote by hand.
 
 ## What's Included
 
@@ -49,6 +68,7 @@ To change the Windows application set, edit `.chezmoidata/packages.yaml` and run
 - **mise** for managing runtimes (Node.js, Python, Go, Rust, Zig) and CLI tools (neovim, gh, ghq, ripgrep, fd, bat, fzf, zoxide, eza, herdr)
 - **Claude Code** CLI (with `claude`/`cl` fish wrappers that run in auto permission mode)
 - **Clipboard**: native tools locally, OSC 52 over SSH, win32yank on WSL
+- **Windows key remapping** (Windows only): left Windows key acts as left Ctrl, written straight into the keyboard driver
 
 ## Usage
 
@@ -77,7 +97,7 @@ Edit files in `~/.local/share/chezmoi/` or use `chezmoi edit <file>` to modify y
 
 `.chezmoiscripts/run_once_after_install-packages.sh.tmpl` detects your OS, installs fish + mise, then runs `mise install` to install every tool declared in `dot_config/mise/config.toml.tmpl`.
 
-`.chezmoiscripts/run_onchange_after_install-packages.ps1.tmpl` does the Windows equivalent with winget, driven by `.chezmoidata/packages.yaml`. Each script is wrapped in an OS guard and renders empty on the other platform, which chezmoi treats as "do not run".
+`.chezmoiscripts/run_onchange_after_install-packages.ps1.tmpl` does the Windows equivalent with winget, driven by `.chezmoidata/packages.yaml`, and `.chezmoiscripts/run_onchange_after_remap-keyboard.ps1.tmpl` writes the key remappings from `.chezmoidata/keyboard.yaml`. Each script is wrapped in an OS guard and renders empty on the other platform, which chezmoi treats as "do not run".
 
 ## License
 
