@@ -56,11 +56,26 @@ if (-not $npm) {
 
 # npm's global bin, where the pi shim lands. Asking npm beats guessing at
 # %APPDATA%\npm, which is only the default.
-$prefix = (& $npm prefix -g 2>$null | Select-Object -First 1)
-if ($LASTEXITCODE -ne 0 -or -not $prefix) {
+#
+# The output is collected in full before anything is picked out of it. Piping a
+# native command straight into 'Select-Object -First 1' stops the pipeline
+# early, which kills npm mid-exit and leaves $LASTEXITCODE at -1: a failure
+# that never happened. npm's stderr is left alone for a related reason - under
+# $ErrorActionPreference = 'Stop', Windows PowerShell turns *redirected* native
+# stderr into a terminating NativeCommandError, so a warning npm prints on a
+# fresh install would abort the script. Let those through to the console.
+$prefixOutput = @(& $npm prefix -g)
+if ($LASTEXITCODE -ne 0) {
     Write-Error "could not read npm's global prefix (exit $LASTEXITCODE)"
     exit 1
 }
+
+$prefix = ($prefixOutput | Where-Object { "$_".Trim() } | Select-Object -First 1)
+if (-not $prefix) {
+    Write-Error "npm printed no global prefix"
+    exit 1
+}
+$prefix = "$prefix".Trim()
 
 $pi = Join-Path $prefix 'pi.cmd'
 
@@ -82,7 +97,7 @@ if (Test-Path -LiteralPath $pi) {
     }
 }
 
-$installed = @(& $pi list 2>$null)
+$installed = @(& $pi list)
 
 foreach ($package in $packages) {
     if ($installed | Select-String -SimpleMatch $package -Quiet) {
