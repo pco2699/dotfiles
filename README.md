@@ -45,11 +45,28 @@ than manages.
 Then reboot, run `wsl -d Debian` to create your Unix user, and follow the Quick
 Install steps above inside WSL to get the shell environment.
 
-If `chezmoi init` reports that a script `cannot be loaded because running
-scripts is disabled on this system`, the generated chezmoi config predates the
-`[interpreters.ps1]` settings that get around Windows' Restricted execution
-policy. Re-run `chezmoi init --apply pco2699` to regenerate it; there is no need
-to change the machine's execution policy.
+### Updating a machine that is already set up
+
+`chezmoi init` and `chezmoi update` each do half the job, so an existing
+machine needs both:
+
+```powershell
+chezmoi update --apply=false
+chezmoi init --apply pco2699
+```
+
+`chezmoi init` only clones when the source directory is not already a git
+working tree — it never pulls one — so on its own it regenerates the config
+from whatever template is already on disk. `chezmoi update` pulls but does not
+regenerate the config. Pulling first and then re-running `init` gets both the
+new source and a config built from it. `--apply=false` on the pull keeps
+chezmoi from applying against the old config on the way past.
+
+This is what to reach for if `chezmoi init` reports that a script `cannot be
+loaded because running scripts is disabled on this system`: the config on disk
+predates the `[interpreters.ps1]` settings that get around Windows' Restricted
+execution policy, and only a pull-then-init brings them in. There is no need to
+change the machine's execution policy.
 
 To change the Windows application set, edit `.chezmoidata/packages.yaml` and run
 `chezmoi apply` — the installer re-runs whenever that list changes.
@@ -122,7 +139,8 @@ chezmoi edit ~/.config/fish/config.fish
 # Apply changes
 chezmoi apply
 
-# Update dotfiles from the repository
+# Update dotfiles from the repository (see the Windows section above when
+# .chezmoi.toml.tmpl itself has changed - update does not regenerate the config)
 chezmoi update
 
 # Add a new dotfile
