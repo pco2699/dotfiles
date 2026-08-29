@@ -168,6 +168,7 @@ jobs:
           $expected = @{
             'run_onchange_after_configure-explorer.ps1.tmpl' = 'Explorer\\Advanced'
             'run_onchange_after_install-packages.ps1.tmpl'   = 'winget install'
+            'run_onchange_after_install-pi.ps1.tmpl'         = 'pi-coding-agent'
             'run_onchange_after_remap-keyboard.ps1.tmpl'     = 'Scancode Map'
           }
 

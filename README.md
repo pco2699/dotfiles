@@ -32,10 +32,15 @@ chezmoi init --apply pco2699
 
 That installs the applications listed in `.chezmoidata/packages.yaml`, sets up
 WSL with Debian, applies the key remappings in `.chezmoidata/keyboard.yaml` and
-the Explorer settings in `.chezmoidata/explorer.yaml` — no dotfiles are written
-to the Windows home directory. Expect UAC prompts: one for WSL, one for the
-remapping, and one for each package that installs machine-wide (Git,
-PowerToys). The Explorer settings are per-user and prompt for nothing.
+the Explorer settings in `.chezmoidata/explorer.yaml`, and installs the pi
+coding agent from `.chezmoidata/pi.yaml`. Expect UAC prompts: one for WSL, one
+for the remapping, and one for each package that installs machine-wide (Git,
+PowerToys). The Explorer settings and pi are per-user and prompt for nothing.
+
+chezmoi still manages no dotfiles on Windows — nothing in `dot_config` is part
+of the Windows target state. The one file written into the Windows home
+directory is `~/.pi/agent/settings.json`, which the pi script merges rather
+than manages.
 
 Then reboot, run `wsl -d Debian` to create your Unix user, and follow the Quick
 Install steps above inside WSL to get the shell environment.
@@ -79,6 +84,18 @@ Explorer does cache them until it restarts, so the script restarts the shell
 when (and only when) it actually changed something; any open Explorer windows
 close with it. The data file lists a few other settings worth knowing.
 
+### pi on Windows
+
+pi is not in winget, so `.chezmoiscripts/run_onchange_after_install-pi.ps1.tmpl`
+installs it with npm — the script sorts after the winget one, which is where
+Node comes from. It then installs the packages from
+[pco-pi-harness](https://github.com/pco2699/pco-pi-harness) and merges the
+declared settings into `~/.pi/agent/settings.json`, keeping any keys already
+there. Credentials are never written: run `pi /login` once per machine.
+
+`.chezmoidata/pi.yaml` is the Windows counterpart of that repository's
+`setup.sh`; if the harness changes what it installs, both need updating.
+
 ## What's Included
 
 - **Fish shell** with plugins managed by fisher, greeting a system summary via fastfetch
@@ -89,6 +106,7 @@ close with it. The data file lists a few other settings worth knowing.
 - **Clipboard**: native tools locally, OSC 52 over SSH, win32yank on WSL
 - **Windows key remapping** (Windows only): left Windows key and caps lock both act as left Ctrl, written straight into the keyboard driver
 - **Windows Explorer** (Windows only): file extensions and hidden files shown
+- **pi** coding agent (Windows only, via npm) with the pco-pi-harness packages and settings
 
 ## Usage
 
@@ -117,7 +135,7 @@ Edit files in `~/.local/share/chezmoi/` or use `chezmoi edit <file>` to modify y
 
 `.chezmoiscripts/run_once_after_install-packages.sh.tmpl` detects your OS, installs fish + mise, then runs `mise install` to install every tool declared in `dot_config/mise/config.toml.tmpl`.
 
-`.chezmoiscripts/run_onchange_after_install-packages.ps1.tmpl` does the Windows equivalent with winget, driven by `.chezmoidata/packages.yaml`, `.chezmoiscripts/run_onchange_after_remap-keyboard.ps1.tmpl` writes the key remappings from `.chezmoidata/keyboard.yaml`, and `.chezmoiscripts/run_onchange_after_configure-explorer.ps1.tmpl` writes the Explorer settings from `.chezmoidata/explorer.yaml`. Each script is wrapped in an OS guard and renders empty on the other platform, which chezmoi treats as "do not run".
+`.chezmoiscripts/run_onchange_after_install-packages.ps1.tmpl` does the Windows equivalent with winget, driven by `.chezmoidata/packages.yaml`, `.chezmoiscripts/run_onchange_after_remap-keyboard.ps1.tmpl` writes the key remappings from `.chezmoidata/keyboard.yaml`, `.chezmoiscripts/run_onchange_after_configure-explorer.ps1.tmpl` writes the Explorer settings from `.chezmoidata/explorer.yaml`, and `.chezmoiscripts/run_onchange_after_install-pi.ps1.tmpl` installs pi from `.chezmoidata/pi.yaml`. Each script is wrapped in an OS guard and renders empty on the other platform, which chezmoi treats as "do not run".
 
 ## License
 

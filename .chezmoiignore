@@ -5,9 +5,11 @@ LICENSE
 
 {{- if eq .chezmoi.os "windows" }}
 
-# Windows gets its applications from winget and nothing else. Every dotfile in
-# this repository targets the Unix side (fish, mise, nvim, git), and WSL runs
-# its own chezmoi with its own home directory for those.
+# Windows gets its applications from winget (plus pi from npm) and no dotfiles
+# at all. Every dotfile in this repository targets the Unix side (fish, mise,
+# nvim, git), and WSL runs its own chezmoi with its own home directory for
+# those. The pi script writes ~/.pi/agent/settings.json, but that is a script
+# merging a file, not a chezmoi-managed target.
 .config
 .config/**
 {{- end }}

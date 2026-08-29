@@ -1,0 +1,30 @@
+# The pi coding agent and the personal harness that configures it, installed by
+# .chezmoiscripts/run_onchange_after_install-pi.ps1.tmpl.
+#
+# pi is not in winget, so this goes through npm - which is why the script sorts
+# after install-packages, where Node comes from.
+#
+# This mirrors setup.sh in pco2699/pco-pi-harness, which is the same thing for
+# Unix. Keep the two in step: if the harness changes what it installs or
+# defaults to, this list is the Windows copy that has to change with it.
+#
+# The script embeds a hash of everything below, so editing any of it is enough
+# to make `chezmoi apply` re-run the installer.
+pi:
+  # Provides the `pi` binary itself.
+  npmPackage: "@earendil-works/pi-coding-agent"
+
+  # Installed with `pi install`, skipped when `pi list` already has them.
+  packages:
+    - "git:github.com/pco2699/pco-pi-harness"
+    - "npm:pi-web-access"
+
+  # Merged into ~/.pi/agent/settings.json, preserving keys that are already
+  # there. Credentials are never written here - `pi /login` handles those on
+  # each machine. defaultProvider is deliberately absent: the provider follows
+  # from the model id, and setup.sh leaves it out for the same reason.
+  settings:
+    theme: dark
+    defaultModel: deepseek/deepseek-v4-pro-0813
+    defaultThinkingLevel: xhigh
+    hideThinkingBlock: true
