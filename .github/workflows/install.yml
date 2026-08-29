@@ -172,8 +172,17 @@ jobs:
           }
 
           # Discovered rather than listed, so a script added later cannot skip
-          # this check by never being added to the table above.
-          foreach ($file in Get-ChildItem .chezmoiscripts\*.ps1.tmpl) {
+          # this check by never being added to the table above. The count has
+          # to match too, or a glob that quietly matches nothing would leave
+          # the loop below with nothing to do and still pass.
+          $scripts = @(Get-ChildItem .chezmoiscripts\*.ps1.tmpl)
+          if ($scripts.Count -ne $expected.Count) {
+            throw "found $($scripts.Count) Windows scripts, but $($expected.Count) are listed above"
+          }
+
+          foreach ($file in $scripts) {
+            Write-Output "checking $($file.Name)"
+
             if (-not $expected.ContainsKey($file.Name)) {
               throw "$($file.Name) has no expected marker; add one to this step"
             }
