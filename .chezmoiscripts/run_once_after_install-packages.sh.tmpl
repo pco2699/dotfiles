@@ -47,6 +47,14 @@ sudo dnf install -y fish curl git zip
 sudo dnf install -y gcc make zlib-devel bzip2 bzip2-devel readline-devel \
     sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel
 
+{{- else if or (eq .osid "linux-arch") (eq .osid "linux-cachyos") }}
+# Arch Linux / CachyOS
+sudo pacman -Sy --needed --noconfirm fish curl git zip
+
+# required by mise when it compiles python from source
+sudo pacman -S --needed --noconfirm base-devel openssl zlib bzip2 readline \
+    sqlite ncurses xz tk libxml2 xmlsec libffi
+
 {{- else }}
 # Generic Linux - install what we can
 echo "Unsupported OS: {{ .osid }}"
@@ -65,6 +73,8 @@ echo "Detected WSL - installing win32yank"
 sudo apt -y install unzip
 {{-   else if eq .osid "linux-fedora" }}
 sudo dnf install -y unzip
+{{-   else if or (eq .osid "linux-arch") (eq .osid "linux-cachyos") }}
+sudo pacman -S --needed --noconfirm unzip
 {{-   end }}
 
 mkdir -p ~/.local/bin

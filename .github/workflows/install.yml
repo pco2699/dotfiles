@@ -66,6 +66,11 @@ jobs:
             bootstrap: dnf install -y sudo curl git tar gzip
             # all CLI tools now come from mise under their canonical names
             commands: fish nvim gh fd rg zoxide bat fzf eza mise herdr claude
+          - name: Arch Linux (latest)
+            image: archlinux:latest
+            bootstrap: pacman -Sy --noconfirm sudo curl git
+            # all CLI tools now come from mise under their canonical names
+            commands: fish nvim gh fd rg zoxide bat fzf eza mise herdr claude
     steps:
       # A bare container image needs the tools chezmoi's install script
       # takes for granted (a fresh interactive machine would have these).
