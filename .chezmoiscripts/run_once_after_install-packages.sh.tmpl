@@ -51,8 +51,11 @@ sudo dnf install -y gcc make zlib-devel bzip2 bzip2-devel readline-devel \
 # Arch Linux / CachyOS
 sudo pacman -Sy --needed --noconfirm fish curl git zip
 
-# required by mise when it compiles python from source
-sudo pacman -S --needed --noconfirm base-devel openssl zlib bzip2 readline \
+# required by mise when it compiles python from source. zlib itself is left
+# out: it's a transitive dependency of pacman (via libarchive), so it's
+# always already present - and naming it explicitly breaks CachyOS, which
+# ships zlib-ng-compat as a conflicting drop-in replacement that provides it.
+sudo pacman -S --needed --noconfirm base-devel openssl bzip2 readline \
     sqlite ncurses xz tk libxml2 xmlsec libffi
 
 {{-   if lookPath "Hyprland" }}
