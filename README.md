@@ -9,6 +9,7 @@ Managed with [chezmoi](https://chezmoi.io) for easy dotfiles management across m
 - macOS (via Homebrew)
 - Ubuntu/Debian (apt)
 - Fedora (dnf)
+- Arch Linux/CachyOS (pacman)
 - WSL2
 - Windows (applications via winget; no dotfiles)
 
@@ -113,6 +114,33 @@ there. Credentials are never written: run `pi /login` once per machine.
 `.chezmoidata/pi.yaml` is the Windows counterpart of that repository's
 `setup.sh`; if the harness changes what it installs, both need updating.
 
+### Hyprland settings
+
+`dot_config/hypr` only carries the settings customized on top of CachyOS's
+stock Hyprland config (installed separately, e.g. via the `cachyos-hypr-noctalia`
+package) — everything else (colors, decorations, window rules, workspace
+layout) is left to whatever the distro/package already put in place:
+
+- `natural_scroll` enabled
+- AeroSpace-style `hjkl` window focus/move bindings, layered onto the arrow-key
+  ones already there; `SUPER+J` (togglesplit) and `SUPER+L` (session lock)
+  moved to `SUPER+Backslash` and `CONTROL+ALT+L` to free up the letters, plus
+  a plain `ALT+<number>` global workspace switch
+- `fcitx5` (with the `mozc` Japanese input engine) and `hypridle` started
+  alongside the rest at Hyprland launch, with `hypridle.conf` set to suspend
+  after 10 minutes idle
+
+`chezmoi apply` only ever writes these files when a `Hyprland` binary is
+already on `PATH` — checked fresh on every apply via `.chezmoiignore`, so a
+machine that installs Hyprland later picks the config up automatically, and
+one without Hyprland (macOS, Windows, a non-Hyprland Linux desktop) never sees
+`~/.config/hypr` at all. The same check in `install-packages.sh.tmpl` installs
+`hypridle` and the `fcitx5`/`fcitx5-mozc` stack on Arch/CachyOS whenever
+Hyprland is present, since the autostart above depends on them. Machine-specific
+bits (monitor names, default apps) are intentionally left out — set those by
+hand per machine, same as any
+dotfiles repo with a hardcoded monitor layout would require.
+
 ## What's Included
 
 - **Fish shell** with plugins managed by fisher, greeting a system summary via fastfetch
@@ -121,6 +149,7 @@ there. Credentials are never written: run `pi /login` once per machine.
 - **mise** for managing runtimes (Node.js, Python, Go, Rust, Zig) and CLI tools (neovim, gh, ghq, ripgrep, fd, bat, fzf, zoxide, eza, herdr)
 - **Claude Code** CLI (with `claude`/`cl` fish wrappers that run in auto permission mode)
 - **Clipboard**: native tools locally, OSC 52 over SSH, win32yank on WSL
+- **Hyprland settings** (only applied when Hyprland is already installed): `hjkl` window navigation, natural scroll, fcitx5/hypridle autostart
 - **Windows key remapping** (Windows only): left Windows key and caps lock both act as left Ctrl, written straight into the keyboard driver
 - **Windows Explorer** (Windows only): file extensions and hidden files shown
 - **pi** coding agent (Windows only, via npm) with the pco-pi-harness packages and settings

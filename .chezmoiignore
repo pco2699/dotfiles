@@ -13,3 +13,12 @@ LICENSE
 .config
 .config/**
 {{- end }}
+
+{{- if not (lookPath "Hyprland") }}
+
+# dot_config/hypr only tweaks an existing Hyprland install (this repo never
+# installs Hyprland itself - that comes from the OS/distro). lookPath
+# re-evaluates on every apply, so a machine that installs Hyprland later
+# picks the config up on its next `chezmoi apply` with no extra step.
+.config/hypr
+{{- end }}
