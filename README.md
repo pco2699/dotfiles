@@ -126,15 +126,19 @@ layout) is left to whatever the distro/package already put in place:
   ones already there; `SUPER+J` (togglesplit) and `SUPER+L` (session lock)
   moved to `SUPER+Backslash` and `CONTROL+ALT+L` to free up the letters, plus
   a plain `ALT+<number>` global workspace switch
-- `fcitx5` and `hypridle` started alongside the rest at Hyprland launch, with
-  `hypridle.conf` set to suspend after 10 minutes idle
+- `fcitx5` (with the `mozc` Japanese input engine) and `hypridle` started
+  alongside the rest at Hyprland launch, with `hypridle.conf` set to suspend
+  after 10 minutes idle
 
 `chezmoi apply` only ever writes these files when a `Hyprland` binary is
 already on `PATH` — checked fresh on every apply via `.chezmoiignore`, so a
 machine that installs Hyprland later picks the config up automatically, and
 one without Hyprland (macOS, Windows, a non-Hyprland Linux desktop) never sees
-`~/.config/hypr` at all. Machine-specific bits (monitor names, default apps)
-are intentionally left out — set those by hand per machine, same as any
+`~/.config/hypr` at all. The same check in `install-packages.sh.tmpl` installs
+`hypridle` and the `fcitx5`/`fcitx5-mozc` stack on Arch/CachyOS whenever
+Hyprland is present, since the autostart above depends on them. Machine-specific
+bits (monitor names, default apps) are intentionally left out — set those by
+hand per machine, same as any
 dotfiles repo with a hardcoded monitor layout would require.
 
 ## What's Included

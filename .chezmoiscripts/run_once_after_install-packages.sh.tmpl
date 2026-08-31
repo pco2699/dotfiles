@@ -55,6 +55,13 @@ sudo pacman -Sy --needed --noconfirm fish curl git zip
 sudo pacman -S --needed --noconfirm base-devel openssl zlib bzip2 readline \
     sqlite ncurses xz tk libxml2 xmlsec libffi
 
+{{-   if lookPath "Hyprland" }}
+
+# dot_config/hypr's autostart starts hypridle (idle/suspend) and fcitx5 with
+# the mozc Japanese input engine, so install them alongside it.
+sudo pacman -S --needed --noconfirm hypridle fcitx5 fcitx5-configtool fcitx5-gtk fcitx5-qt fcitx5-mozc
+{{-   end }}
+
 {{- else }}
 # Generic Linux - install what we can
 echo "Unsupported OS: {{ .osid }}"
