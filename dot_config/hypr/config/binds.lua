@@ -15,28 +15,40 @@ hl.bind(mainMod .. " + F",           hl.dsp.window.fullscreen())
 hl.bind(mainMod .. " + Backslash",   hl.dsp.layout("togglesplit")) -- moved off SUPER+J to free it for hjkl focus
 
 -- Change focus
-hl.bind(mainMod .. " + Left",  hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + Right", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + Up",    hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + Down",  hl.dsp.focus({ direction = "down" }))
+-- hy3-aware: use the hy3 layout dispatchers once the plugin is loaded,
+-- fall back to the native ones otherwise (e.g. during the first reload pass)
+local hy3 = hl.plugin.hy3
+local function hy3Focus(dir)
+    if hy3 then return hy3.move_focus(dir) end
+    return hl.dsp.focus({ direction = dir })
+end
+local function hy3Move(dir)
+    if hy3 then return hy3.move_window(dir) end
+    return hl.dsp.window.move({ direction = dir })
+end
+
+hl.bind(mainMod .. " + Left",  hy3Focus("left"))
+hl.bind(mainMod .. " + Right", hy3Focus("right"))
+hl.bind(mainMod .. " + Up",    hy3Focus("up"))
+hl.bind(mainMod .. " + Down",  hy3Focus("down"))
 -- AeroSpace-style vim navigation (mirrors the arrow bindings above)
-hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + K", hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + J", hl.dsp.focus({ direction = "down" }))
+hl.bind(mainMod .. " + H", hy3Focus("left"))
+hl.bind(mainMod .. " + L", hy3Focus("right"))
+hl.bind(mainMod .. " + K", hy3Focus("up"))
+hl.bind(mainMod .. " + J", hy3Focus("down"))
 hl.bind("ALT + Tab",           hl.dsp.window.cycle_next())
 hl.bind(mainMod .. " + Tab",   hl.dsp.exec_cmd(noctCall .. "window-switcher"))
 
 -- Move active window around workspaces & monitors
-hl.bind(mainMod .. " + SHIFT + Up",                   hl.dsp.window.move({ direction = "u" }))
-hl.bind(mainMod .. " + SHIFT + Right",                hl.dsp.window.move({ direction = "r" }))
-hl.bind(mainMod .. " + SHIFT + Left",                 hl.dsp.window.move({ direction = "l" }))
-hl.bind(mainMod .. " + SHIFT + Down",                 hl.dsp.window.move({ direction = "d" }))
+hl.bind(mainMod .. " + SHIFT + Up",                   hy3Move("up"))
+hl.bind(mainMod .. " + SHIFT + Right",                hy3Move("right"))
+hl.bind(mainMod .. " + SHIFT + Left",                 hy3Move("left"))
+hl.bind(mainMod .. " + SHIFT + Down",                 hy3Move("down"))
 -- AeroSpace-style vim move (mirrors the arrow bindings above)
-hl.bind(mainMod .. " + SHIFT + H", hl.dsp.window.move({ direction = "l" }))
-hl.bind(mainMod .. " + SHIFT + L", hl.dsp.window.move({ direction = "r" }))
-hl.bind(mainMod .. " + SHIFT + K", hl.dsp.window.move({ direction = "u" }))
-hl.bind(mainMod .. " + SHIFT + J", hl.dsp.window.move({ direction = "d" }))
+hl.bind(mainMod .. " + SHIFT + H", hy3Move("left"))
+hl.bind(mainMod .. " + SHIFT + L", hy3Move("right"))
+hl.bind(mainMod .. " + SHIFT + K", hy3Move("up"))
+hl.bind(mainMod .. " + SHIFT + J", hy3Move("down"))
 hl.bind(mainMod .. " + SHIFT + 1",                    hl.dsp.window.move({ monitor = MONITOR1 }))
 hl.bind(mainMod .. " + SHIFT + 2",                    hl.dsp.window.move({ monitor = MONITOR2 }))
 hl.bind(mainMod .. " + SHIFT + 3",                    hl.dsp.window.move({ monitor = MONITOR3 }))
