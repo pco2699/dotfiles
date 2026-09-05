@@ -17,7 +17,9 @@ zoxide = "latest"
 # fails on darwin; it comes from Homebrew there instead (see install script).
 eza = "latest"
 {{- end }}
-herdr = "latest"
+# Older mise releases predate Herdr's short-name registry entry. The explicit
+# GitHub backend works on those releases as well as current ones.
+"github:herdrdev/herdr" = "latest"
 claude = "latest"
 # not in mise's core registry; aqua backend resolves the GitHub release assets
 "aqua:fastfetch-cli/fastfetch" = "latest"

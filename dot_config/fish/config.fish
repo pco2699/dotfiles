@@ -60,6 +60,9 @@ if status is-interactive
         zoxide init fish --cmd cd | source
     end
 
-    # Disable fzf.fish's ctrl-v binding (variables search) — frees ctrl-v for normal paste
-    fzf_configure_bindings --variables=''
+    # Disable fzf.fish's ctrl-v binding (variables search) — frees ctrl-v for
+    # normal paste. Fisher may not have installed the plugin yet on a new host.
+    if functions -q fzf_configure_bindings
+        fzf_configure_bindings --variables=''
+    end
 end
