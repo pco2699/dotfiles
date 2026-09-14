@@ -19,8 +19,10 @@ focus_pane_down = "prefix+j"
 focus_pane_up = "prefix+k"
 focus_pane_right = "prefix+l"
 
-# cycle tabs like tmux windows (prefix+ctrl+h/l), plus herdr defaults,
-# plus a direct (no-prefix) shortcut like browser/editor tab switching.
+# cycle tabs with prefix+ctrl+h/l, plus a direct (no-prefix) shortcut like
+# browser/editor tab switching. prefix+p/n are deliberately NOT tab bindings:
+# they cycle workspaces below (herdr's tab defaults would otherwise claim
+# them, silently disabling the workspace bindings).
 # Ctrl+comma/period have no legacy terminal escape sequence at all (unlike
 # letters, which map to classic ASCII control codes) - only terminals with
 # a modern keyboard protocol (iTerm2/Kitty/WezTerm/Ghostty) can transmit
@@ -29,13 +31,14 @@ focus_pane_right = "prefix+l"
 # also hard-binds ctrl+, to Open Settings, so WSL uses ctrl+alt+left/right
 # instead, which has robust escape-sequence support everywhere.
 {{- if and (eq .chezmoi.os "linux") (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
-previous_tab = ["prefix+p", "prefix+ctrl+h", "ctrl+alt+left"]
-next_tab = ["prefix+n", "prefix+ctrl+l", "ctrl+alt+right"]
+previous_tab = ["prefix+ctrl+h", "ctrl+alt+left"]
+next_tab = ["prefix+ctrl+l", "ctrl+alt+right"]
 {{- else }}
 previous_tab = ["prefix+ctrl+h", "ctrl+comma"]
 next_tab = ["prefix+ctrl+l", "ctrl+period"]
 {{- end }}
 
+# cycle workspaces (tmux-like reach: prefix+p/n)
 previous_workspace = "prefix+p"
 next_workspace = "prefix+n"
 
