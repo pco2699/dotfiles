@@ -114,6 +114,11 @@ there. Credentials are never written: run `pi /login` once per machine.
 `.chezmoidata/pi.yaml` is the Windows counterpart of that repository's
 `setup.sh`; if the harness changes what it installs, both need updating.
 
+On macOS and Linux (WSL included) there is nothing to mirror:
+`.chezmoiscripts/run_once_after_install-pi.sh.tmpl` runs that repository's
+`setup.sh` directly, using the Node that mise installs. It is skipped quietly
+where Node is not installed (Codespaces).
+
 ### Hyprland settings
 
 `dot_config/hypr` only carries the settings customized on top of CachyOS's
@@ -152,7 +157,7 @@ dotfiles repo with a hardcoded monitor layout would require.
 - **Hyprland settings** (only applied when Hyprland is already installed): `hjkl` window navigation, natural scroll, fcitx5/hypridle autostart
 - **Windows key remapping** (Windows only): left Windows key and caps lock both act as left Ctrl, written straight into the keyboard driver
 - **Windows Explorer** (Windows only): file extensions and hidden files shown
-- **pi** coding agent (Windows only, via npm) with the pco-pi-harness packages and settings
+- **pi** coding agent (via npm) with the pco-pi-harness packages and settings with the pco-pi-harness packages and settings
 
 ## Usage
 
@@ -182,7 +187,7 @@ Edit files in `~/.local/share/chezmoi/` or use `chezmoi edit <file>` to modify y
 
 `.chezmoiscripts/run_once_after_install-packages.sh.tmpl` detects your OS, installs fish + mise, then runs `mise install` to install every tool declared in `dot_config/mise/config.toml.tmpl`.
 
-`.chezmoiscripts/run_onchange_after_install-packages.ps1.tmpl` does the Windows equivalent with winget, driven by `.chezmoidata/packages.yaml`, `.chezmoiscripts/run_onchange_after_remap-keyboard.ps1.tmpl` writes the key remappings from `.chezmoidata/keyboard.yaml`, `.chezmoiscripts/run_onchange_after_configure-explorer.ps1.tmpl` writes the Explorer settings from `.chezmoidata/explorer.yaml`, and `.chezmoiscripts/run_onchange_after_install-pi.ps1.tmpl` installs pi from `.chezmoidata/pi.yaml`. Each script is wrapped in an OS guard and renders empty on the other platform, which chezmoi treats as "do not run".
+`.chezmoiscripts/run_onchange_after_install-packages.ps1.tmpl` does the Windows equivalent with winget, driven by `.chezmoidata/packages.yaml`, `.chezmoiscripts/run_onchange_after_remap-keyboard.ps1.tmpl` writes the key remappings from `.chezmoidata/keyboard.yaml`, `.chezmoiscripts/run_onchange_after_configure-explorer.ps1.tmpl` writes the Explorer settings from `.chezmoidata/explorer.yaml`, and `.chezmoiscripts/run_onchange_after_install-pi.ps1.tmpl` installs pi from `.chezmoidata/pi.yaml`. On Unix, `.chezmoiscripts/run_once_after_install-pi.sh.tmpl` runs the harness's own `setup.sh` instead. Each script is wrapped in an OS guard and renders empty on the other platform, which chezmoi treats as "do not run".
 
 ## License
 

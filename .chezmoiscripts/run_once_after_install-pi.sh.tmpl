@@ -1,0 +1,33 @@
+{{- if ne .chezmoi.os "windows" -}}
+#!/bin/bash
+
+# Sets up the pi coding agent by running setup.sh from pco2699/pco-pi-harness,
+# which installs pi, the harness packages, and the settings it runs with.
+# That script is the source of truth on Unix, so it is run as-is rather than
+# copied here (the Windows script has to mirror it by hand, see
+# .chezmoidata/pi.yaml). This runs once per machine; to pick up later harness
+# changes, re-run the curl line below by hand.
+
+set -e
+
+# This process's PATH predates the install script that put mise and Node on
+# the machine, so add the places they live.
+export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
+
+# Node is skipped on Codespaces (see dot_config/mise/config.toml.tmpl), and
+# setup.sh needs npm to install pi. That is a choice, not a failure, so leave
+# quietly instead of failing the whole apply.
+if ! command -v npm >/dev/null 2>&1; then
+    echo "==> npm not found; skipping pi (Node is not installed on this machine)"
+    exit 0
+fi
+
+echo "==> pi (pco-pi-harness setup.sh)"
+curl -fsSL https://raw.githubusercontent.com/pco2699/pco-pi-harness/master/setup.sh | sh
+
+# npm put the binary inside mise's Node install; mise only exposes it on PATH
+# once its shims are regenerated.
+if command -v mise >/dev/null 2>&1; then
+    mise reshim
+fi
+{{- end }}
