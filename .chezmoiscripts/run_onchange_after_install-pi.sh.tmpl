@@ -1,0 +1,110 @@
+{{- if ne .chezmoi.os "windows" -}}
+#!/bin/bash
+
+# Installs the pi coding agent and the harness declared in .chezmoidata/pi.yaml.
+#
+# pi is not in mise's registry, so this goes through npm - which is why the
+# script sorts after install-packages, where mise installs Node. It is the
+# Unix counterpart of run_onchange_after_install-pi.ps1.tmpl and shares its data
+# file, so the two cannot drift apart on what gets installed.
+#
+# Like the Windows script, the only file it touches is the merged
+# ~/.pi/agent/settings.json; nothing here is a chezmoi target.
+#
+# The hash below changes whenever any of the pi settings do, which is what
+# makes run_onchange_ re-run the script. Do not remove it.
+# pi: {{ .pi | toJson | sha256sum }}
+
+set -e
+
+npm_package={{ .pi.npmPackage | quote }}
+packages=(
+{{- range .pi.packages }}
+    {{ . | quote }}
+{{- end }}
+)
+
+# Rendered as JSON so that types survive: a bool stays a bool and does not
+# become the string "true" in settings.json.
+settings_json='{{ .pi.settings | toJson }}'
+
+# This process's PATH predates the install script that put mise and Node on
+# the machine, so add the places they live.
+export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
+
+# Node is skipped on Codespaces/CI (see dot_config/mise/config.toml.tmpl), and
+# without it there is nothing to install pi with. That is a choice, not a
+# failure, so leave quietly instead of failing the whole apply.
+if ! command -v npm >/dev/null 2>&1; then
+    echo "==> npm not found; skipping pi (Node is not installed on this machine)"
+    exit 0
+fi
+
+if command -v pi >/dev/null 2>&1; then
+    echo "==> pi already installed"
+else
+    echo "==> $npm_package"
+    # --ignore-scripts matches the harness's own setup.sh: nothing in the
+    # package needs a postinstall, and skipping them keeps the install honest.
+    npm install -g --ignore-scripts "$npm_package"
+
+    # npm put the binary inside mise's Node install; mise only exposes it on
+    # PATH once its shims are regenerated.
+    if command -v mise >/dev/null 2>&1; then
+        mise reshim
+    fi
+
+    if ! command -v pi >/dev/null 2>&1; then
+        echo "error: npm reported success but pi is not on PATH" >&2
+        exit 1
+    fi
+fi
+
+installed="$(pi list)"
+
+for package in "${packages[@]}"; do
+    if grep -qF -- "$package" <<<"$installed"; then
+        echo "==> $package : already installed"
+        continue
+    fi
+
+    echo "==> $package"
+    pi install "$package"
+done
+
+# Settings are merged rather than replaced: everything pi writes here itself -
+# and anything set by hand - survives, and only the keys declared in
+# .chezmoidata/pi.yaml are forced. Node does the merge since it is already
+# required above, where jq is not guaranteed.
+agent_dir="${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}"
+settings_file="$agent_dir/settings.json"
+
+mkdir -p "$agent_dir"
+
+PI_SETTINGS_JSON="$settings_json" PI_SETTINGS_FILE="$settings_file" node <<'JS'
+const fs = require("fs");
+
+const file = process.env.PI_SETTINGS_FILE;
+const desired = JSON.parse(process.env.PI_SETTINGS_JSON);
+
+let current = {};
+if (fs.existsSync(file)) {
+  try {
+    current = JSON.parse(fs.readFileSync(file, "utf8"));
+  } catch {
+    console.log(`    ${file} is not valid JSON; starting fresh`);
+  }
+}
+
+const merged = { ...current, ...desired };
+
+if (JSON.stringify(merged) === JSON.stringify(current)) {
+  console.log("==> settings already applied");
+  process.exit(0);
+}
+
+fs.writeFileSync(file, JSON.stringify(merged, null, 2) + "\n");
+console.log(`==> settings written to ${file}`);
+console.log("    run 'pi /login' once to add this machine's provider credentials");
+JS
+{{- end }}
